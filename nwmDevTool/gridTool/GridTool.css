@@ -1,0 +1,39 @@
+*, ::before, ::after
+{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+:host
+{
+    height: 100%;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto;
+}
+.grid
+{
+    width: 100%;
+    height: 100%;
+    border: 1px solid darkslategray;
+}
+.grid [class*="box"]
+{
+    border: 1px dashed black;
+}
+fieldset
+{
+    padding: 5px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+@media screen and (min-width: 700px) 
+{
+    :host
+    {
+        grid-template-columns: 1fr auto;
+        grid-template-rows: 1fr;
+    }
+}
