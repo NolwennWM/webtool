@@ -84,6 +84,7 @@ export default class GridTool extends HTMLElement
         this.#setTemplate(this.columns, this.columnsSizes);
         this.#setTemplate(this.rows, this.rowsSizes);
         this.#setSizes();
+        this.#createInputs();
     }
     /**
      * Paramètre les colonnes et rangées de la grid ainsi que les gaps
@@ -123,6 +124,7 @@ export default class GridTool extends HTMLElement
         this.#createDivs();
         this.#setTemplate(diff, template);
         this.#setSizes(current);
+        this.#createInputs(e.target.name);
     }
     /**
      * Ajoute ou surprime des éléments du tableau de taille donné en argument.
@@ -193,11 +195,14 @@ export default class GridTool extends HTMLElement
                 }
                 else
                 {
-                    template += line + " ";
+                    // TODO : soit le premier soit le dernier est valide
+                    template += prev + " ";
                 }
                 total = 0;
             }
+            console.log(template);
         }
+        console.log(template);
         this.grid.style[property] = template;
         this[form].style[property] = template;
     }
@@ -229,12 +234,41 @@ export default class GridTool extends HTMLElement
 
         console.log(this.totalBox);
     }
-    #createInputs()
+    #createInputs(target="both")
     {
+        console.log("input");
         if(target === "columns" || target === "both")
         {
-            this.columnsForm
+            this.columnsForm.textContent = "";
+            for(let i = 0; i< this.columns; i++)
+            {
+                const inp = document.createElement("input");
+                inp.dataset.id = i;
+                inp.dataset.name = "columns";
+                inp.addEventListener("change", this.#inputToSize.bind(this));
+                this.columnsForm.append(inp);
+            }
         }
+        if(target === "rows" || target === "both")
+        {
+            this.rowsForm.textContent = "";
+            for(let i = 0; i< this.rows; i++)
+            {
+                const inp = document.createElement("input");
+                inp.dataset.id = i;
+                inp.dataset.name = "rows";
+                inp.addEventListener("change", this.#inputToSize.bind(this));
+                this.rowsForm.append(inp);
+            }
+        }
+    }
+    #inputToSize(e)
+    {
+        const   id = e.target.dataset.id,
+                name = e.target.dataset.name;
+        this[name + "Sizes"][id] = e.target.value;
+        console.log(this.columnsSizes, this.rowsSizes);
+        this.#setSizes(name);
     }
     /**
      * Affiche un exemple de code HTML correspondant à la grid
