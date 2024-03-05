@@ -195,7 +195,7 @@ export default class GridTool extends HTMLElement
                 }
                 else
                 {
-                    // TODO : soit le premier soit le dernier est valide
+                        // TODO : soit le premier soit le dernier est valide
                     template += prev + " ";
                 }
                 total = 0;
