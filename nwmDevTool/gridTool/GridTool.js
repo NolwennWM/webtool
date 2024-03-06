@@ -4,18 +4,81 @@
  */
 export default class GridTool extends HTMLElement
 {
+    // default value :
     columns = 2;
     rows = 2;
-    totalBox = 0;
     defaultSize = "1fr";
+    lang = "fr";
+    text = {
+        languages: ["fr", "en"],
+        form:{
+            columns:{
+                fr: "Colonnes",
+                en: "Columns"
+            },
+            rows:{
+                fr: "Rangées",
+                en: "Rows"
+            },
+            columnGap:{
+                fr: "Écart des Colonnes (en px)",
+                en: "Columns Gap (in px)"
+            },
+            rowGap:{
+                fr: "Écart des Rangées (en px)",
+                en: "Rows Gap (in px)"
+            },
+            codeButton:{
+                fr: "Voir le Code",
+                en: "See the Code"
+            }
+        },
+        errors:{
+            input:{
+                fr: "name de l'input inconnu",
+                en: "Input's name unknown"
+            },
+            sizes:{
+                fr: "Selectionnez seulement rows, columns ou both",
+                en: "Select rows, columns or both only."
+            }
+        },
+        display:{
+            title:{
+                fr: "Copiez et adaptez le code ci-dessous",
+                en: "Copy and adapt the code below"
+            },
+            close: {
+                fr: "Fermer le Code",
+                en: "Close the Code"
+            },
+            copy:{
+                fr: "Copier dans le presse-papier",
+                en: "Copy in the clipboard"
+            },
+            copied:{
+                fr: "Code Copié",
+                en: "Code Copied"
+            },
+            html:{
+
+            }
+        }
+    }
+    formInfo = [
+        {name:"columns", max:20, default:this.columns},
+        {name:"rows", max:20, default:this.rows},
+        {name:"columnGap", max:50, default:0},
+        {name:"rowGap", max:50, default:0},
+    ];
+    // fonctionnal properties :
+    columnsId = 0;
+    rowsId = 0;
+    totalBox = 0;
     columnsSizes = [];
     rowsSizes = [];
-    formInfo = [
-        {label: "Columns", name:"columns", max:20, default:this.columns},
-        {label: "Rows", name:"rows", max:20, default:this.rows},
-        {label: "Columns Gap (in px)", name:"columnsGap", max:50, default:0},
-        {label: "Rows Gap (in px)", name:"rowsGap", max:50, default:0},
-    ];
+    css = {};
+    
     constructor()
     {
         super();
@@ -28,6 +91,7 @@ export default class GridTool extends HTMLElement
     #init()
     {
         this.attachShadow({mode:"open"});
+        console.log(document.URL);
 
         const style = document.createElement("link");
         style.rel = "stylesheet";
@@ -50,10 +114,22 @@ export default class GridTool extends HTMLElement
         this.form = document.createElement("div");
         this.form.classList.add("form");
 
+        this.#chooseLanguage();
         this.#createForm();
 
         container.append(this.columnsForm, this.rowsForm, this.grid);
         this.shadowRoot.append(container, this.form);
+    }
+    #chooseLanguage()
+    {
+        const params = new URLSearchParams(document.location.search);
+        const lang = params.get("lang");
+        if(!lang || !this.text.languages.includes(lang))
+        {
+            this.lang = "en";
+            return;
+        }
+        this.lang = lang;
     }
     /**
      * Créer le formulaire de paramétrage de la grid.
@@ -66,7 +142,7 @@ export default class GridTool extends HTMLElement
             const fieldSet = document.createElement("fieldset");
 
             const label = document.createElement("label");
-            label.textContent = field.label;
+            label.textContent = this.text.form[field.name][this.lang];
 
             const input = document.createElement("input");
             input.type = "number";
@@ -79,12 +155,16 @@ export default class GridTool extends HTMLElement
             fieldSet.append(label, input);
             this.form.append(fieldSet);
         }
+
+        const codeBtn = document.createElement("button");
+        codeBtn.textContent = this.text.form.codeButton[this.lang];
+        codeBtn.addEventListener("click", this.#getCode.bind(this));
+        this.form.append(codeBtn);
         
         this.#createDivs();
-        this.#setTemplate(this.columns, this.columnsSizes);
-        this.#setTemplate(this.rows, this.rowsSizes);
+        this.#setTemplate(this.columns, "columns");
+        this.#setTemplate(this.rows, "rows");
         this.#setSizes();
-        this.#createInputs();
     }
     /**
      * Paramètre les colonnes et rangées de la grid ainsi que les gaps
@@ -93,56 +173,58 @@ export default class GridTool extends HTMLElement
      */
     #setGrid(e)
     {
-        let template, current;
+        let current = e.target.name;
 
         const nb = parseInt(e.target.value);
         if(nb<0) return;
 
-        switch(e.target.name)
+        switch(current)
         {
             case "columns":
-                template = this.columnsSizes;
-                current = "columns";
-                break;
             case "rows":
-                template = this.rowsSizes;
-                current = "rows";
                 break;
-            case "rowsGap":
-                this.grid.style.rowGap = nb + "px";
-                return;
-            case "columnsGap":
-                this.grid.style.columnGap = nb + "px";
+            case "rowGap":
+            case "columnGap":
+                this.grid.style[current] = nb + "px";
+                this.css[current] = nb;
                 return;
             default:
-                console.error("Input Name not find");
+                console.error(this.text.errors.input[this.lang]);
                 return;
         }
         let diff = nb - this[current];
         this[current] = nb;
             
         this.#createDivs();
-        this.#setTemplate(diff, template);
+        this.#setTemplate(diff, current);
         this.#setSizes(current);
-        this.#createInputs(e.target.name);
     }
     /**
      * Ajoute ou surprime des éléments du tableau de taille donné en argument.
      * @param {number} diff number of grid or row to add or remove
-     * @param {Array} template Array of sizes for grid or column
+     * @param {string} target 
      */
-    #setTemplate(diff, template)
+    #setTemplate(diff, target)
     {
+        const form = this[target+"Form"];
         if(diff > 0)
         {
             for(let i = 0; i<diff; i++)
             {
-                template.push(this.defaultSize);
+                this[target+"Sizes"].push(this.defaultSize);
+
+                const inp = document.createElement("input");
+                inp.dataset.id = this[target+"Id"]++;
+                inp.dataset.name = target;
+                inp.value = this.defaultSize;
+                inp.addEventListener("change", this.#inputToSize.bind(this));
+                form.append(inp);
             }
         }
         else
         {
-            template.splice(diff, diff*-1)
+            this[target+"Sizes"].splice(diff, diff*-1);
+            form.children[--this[target+"Id"]].remove();
         }
     }
     /**
@@ -170,7 +252,7 @@ export default class GridTool extends HTMLElement
                 this.#setSizes("rows");
                 return; 
             default:
-                console.error("Select Rows, Columns or both only.");
+                console.error(this.text.errors.sizes[this.lang]);
                 return 
         }
         let total = 1, 
@@ -206,6 +288,7 @@ export default class GridTool extends HTMLElement
         }
         this.grid.style[property] = template;
         this[form].style[property] = template;
+        this.css[target] = template;
     }
     /**
      * Crée les blocs de la grid
@@ -235,36 +318,6 @@ export default class GridTool extends HTMLElement
 
         console.log(this.totalBox);
     }
-    #createInputs(target="both")
-    {
-        console.log("input");
-        if(target === "columns" || target === "both")
-        {
-            this.columnsForm.textContent = "";
-            for(let i = 0; i< this.columns; i++)
-            {
-                const inp = document.createElement("input");
-                inp.dataset.id = i;
-                inp.dataset.name = "columns";
-                inp.value = this.defaultSize;
-                inp.addEventListener("change", this.#inputToSize.bind(this));
-                this.columnsForm.append(inp);
-            }
-        }
-        if(target === "rows" || target === "both")
-        {
-            this.rowsForm.textContent = "";
-            for(let i = 0; i< this.rows; i++)
-            {
-                const inp = document.createElement("input");
-                inp.dataset.id = i;
-                inp.dataset.name = "rows";
-                inp.value = this.defaultSize;
-                inp.addEventListener("change", this.#inputToSize.bind(this));
-                this.rowsForm.append(inp);
-            }
-        }
-    }
     #inputToSize(e)
     {
         const   id = e.target.dataset.id,
@@ -285,7 +338,72 @@ export default class GridTool extends HTMLElement
      */
     #getCSS()
     {
-        console.log("Afficher CSS");
+        let displayCode = "<span class='selector'>.parent</span>\r{\r\t<span class='property'>display</span>: <span class='value'>grid</span>;\r";
+        let copyCode = ".parent\r{\r\tdisplay: grid;\r";
+
+        if(this.css.columns)
+        {
+            displayCode += `\t<span class='property'>grid-template-columns</span>: <span class='value'>${this.css.columns}</span>;\r`;
+            copyCode += `\tgrid-template-columns: ${this.css.columns};\r`;
+        } 
+        if(this.css.rows)
+        {
+            displayCode += `\t<span class='property'>grid-template-rows</span>: <span class='value'>${this.css.rows}</span>;\r`;
+            copyCode += `\tgrid-template-rows: ${this.css.rows};\r`;
+        } 
+        if(this.css.columnGap)
+        {
+            displayCode += `\t<span class='property'>column-gap</span>: <span class='value'>${this.css.columnGap}px</span>;\r`;
+            copyCode += `\tcolumn-gap: ${this.css.columnGap}px;\r`;
+        } 
+        if(this.css.rowGap)
+        {
+            displayCode += `\t<span class='property'>row-gap</span>: <span class='value'>${this.css.rowGap}px</span>;\r`;
+            copyCode += `\trow-gap: ${this.css.rowGap}px;\r`;
+        } 
+
+        this.css.copy = copyCode + "}";
+        return displayCode + "}";
+    }
+    #getCode()
+    {
+        const overlay = document.createElement("div");
+        overlay.classList.add("overlay");
+
+        const displayBlock = document.createElement("div");
+        displayBlock.classList.add("displayBlock");
+        
+        const h3 = document.createElement("h3");
+        h3.textContent = this.text.display.title[this.lang];
+
+        const close = document.createElement("button");
+        close.classList.add("close");
+        close.textContent = this.text.display.close[this.lang];
+        
+        const copy = document.createElement("button");
+        copy.classList.add("copy");
+        copy.textContent = this.text.display.copy[this.lang];
+
+        const pre = document.createElement("pre");
+
+        const code = document.createElement("code");
+        code.innerHTML = this.#getCSS();
+
+        pre.append(copy, code);
+        displayBlock.append(h3, pre, close);
+        overlay.append(displayBlock);
+        this.shadowRoot.append(overlay);
+
+        copy.addEventListener("click", ()=>
+        {
+            navigator.clipboard.writeText(this.css.copy);
+            copy.textContent = this.text.display.copied[this.lang];
+            setTimeout(() => {
+                copy.textContent = this.text.display.copy[this.lang];
+                
+            }, 2000);
+        });
+        close.addEventListener("click", ()=>overlay.remove());
     }
 }
 customElements.define("nwm-grid", GridTool);
