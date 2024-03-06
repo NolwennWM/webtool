@@ -173,20 +173,19 @@ export default class GridTool extends HTMLElement
                 console.error("Select Rows, Columns or both only.");
                 return 
         }
-        let total = 0, 
+        let total = 1, 
             prev = "",
             template = "",
             count = arr.length;
 
         for (const line of arr) 
         {
-            console.log(total, line);
             count--;
-            if(prev === line || total === 0)
+            if(prev === line)
             {
-                prev = line;
                 total++;
             } 
+            console.log(prev !== line || count === 0);
             if(prev !== line || count === 0)
             {
                 if(total > 1)
@@ -195,14 +194,16 @@ export default class GridTool extends HTMLElement
                 }
                 else
                 {
-                        // TODO : soit le premier soit le dernier est valide
                     template += prev + " ";
                 }
-                total = 0;
+                if(prev !== line && count === 0)
+                {
+                    template += line;
+                }
+                total = 1;
             }
-            console.log(template);
+            prev = line;
         }
-        console.log(template);
         this.grid.style[property] = template;
         this[form].style[property] = template;
     }
@@ -245,6 +246,7 @@ export default class GridTool extends HTMLElement
                 const inp = document.createElement("input");
                 inp.dataset.id = i;
                 inp.dataset.name = "columns";
+                inp.value = this.defaultSize;
                 inp.addEventListener("change", this.#inputToSize.bind(this));
                 this.columnsForm.append(inp);
             }
@@ -257,6 +259,7 @@ export default class GridTool extends HTMLElement
                 const inp = document.createElement("input");
                 inp.dataset.id = i;
                 inp.dataset.name = "rows";
+                inp.value = this.defaultSize;
                 inp.addEventListener("change", this.#inputToSize.bind(this));
                 this.rowsForm.append(inp);
             }
