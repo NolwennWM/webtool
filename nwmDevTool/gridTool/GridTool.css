@@ -1,15 +1,6 @@
-*, ::before, ::after
+
+.tool-container
 {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-:host
-{
-    border: 5px solid silver;
-    border-radius: 5px;
-    height: 100%;
-    width: 100%;
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 1fr auto;
@@ -128,11 +119,11 @@ fieldset
 .displayBlock .selector{color: goldenrod;}
 .displayBlock .property{color: lightskyblue;}
 .displayBlock .value{color:chocolate;}
-@media screen and (min-width: 700px) 
+/* @media screen and (min-width: 700px) 
 {
-    :host
+    .tool-container
     {
         grid-template-columns: 1fr auto;
         grid-template-rows: 1fr;
     }
-}
+} */

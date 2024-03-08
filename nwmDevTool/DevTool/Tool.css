@@ -1,0 +1,44 @@
+*, ::before, ::after
+{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+:host
+{
+    --header-bg-color: silver;
+    --header-height: 2em;
+    --header-padding: 5px;
+    --border-size: 5px;
+
+    border: var(--border-size) solid var(--header-bg-color);
+    border-radius: 5px;
+    height: calc(var(--border-size) + var(--header-height) + var(--header-padding) * 2);
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    overflow: hidden;
+    transition: height .3s linear;
+    /* slow? */
+    /* resize: vertical; */
+}
+.tool-header
+{
+    background-color: var(--header-bg-color);
+    text-align: center;
+    cursor: pointer;
+    height: calc(var(--header-height) + var(--header-padding) * 2);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    padding: 5px;
+    align-content: center;
+}
+.tool-header h2
+{
+    font-size: 1.5em;
+}
+:host(.open)
+{
+    height: 100%;
+}

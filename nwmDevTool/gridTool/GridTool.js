@@ -1,16 +1,20 @@
 "use strict";
+import Tool from "../DevTool/Tool.js";
 /**
  * Balise HTML créant un GRID generator
  */
-export default class GridTool extends HTMLElement
+export default class GridTool extends Tool
 {
     // default value :
     columns = 2;
     rows = 2;
     defaultSize = "1fr";
-    lang = "fr";
     text = {
         languages: ["fr", "en"],
+        title:{
+            fr: "Générateur de Grid",
+            en: "Grid Generator"
+        },
         form:{
             columns:{
                 fr: "Colonnes",
@@ -82,21 +86,19 @@ export default class GridTool extends HTMLElement
     constructor()
     {
         super();
+        this.chooseLanguage();
+        this.setTitle(this.text.title[this.lang]);
         this.#init();
-        
     }
     /**
      * Génère les éléments principaux du grid generator
      */
     #init()
     {
-        this.attachShadow({mode:"open"});
+        // this.attachShadow({mode:"open"});
         console.log(document.URL);
 
-        const style = document.createElement("link");
-        style.rel = "stylesheet";
-        style.href = "./nwmDevTool/gridTool/GridTool.css";
-        this.shadowRoot.append(style);
+        this.setCSS("./nwmDevTool/gridTool/GridTool.css");
 
         const container = document.createElement("div");
         container.classList.add("grid-container");
@@ -114,22 +116,13 @@ export default class GridTool extends HTMLElement
         this.form = document.createElement("div");
         this.form.classList.add("form");
 
-        this.#chooseLanguage();
         this.#createForm();
 
         container.append(this.columnsForm, this.rowsForm, this.grid);
-        this.shadowRoot.append(container, this.form);
-    }
-    #chooseLanguage()
-    {
-        const params = new URLSearchParams(document.location.search);
-        const lang = params.get("lang");
-        if(!lang || !this.text.languages.includes(lang))
-        {
-            this.lang = "en";
-            return;
-        }
-        this.lang = lang;
+        this.container.append(container, this.form);
+
+        this.#setResponsive();
+        window.addEventListener("resize", this.#setResponsive.bind(this));
     }
     /**
      * Créer le formulaire de paramétrage de la grid.
@@ -404,6 +397,20 @@ export default class GridTool extends HTMLElement
             }, 2000);
         });
         close.addEventListener("click", ()=>overlay.remove());
+    }
+    #setResponsive()
+    {
+        const sizes = this.getBoundingClientRect();
+        if(sizes.width>700)
+        {
+            this.container.style.gridTemplateColumns = "1fr auto";
+            this.container.style.gridTemplateRows = "1fr";
+        }
+        else
+        {
+            this.container.style.gridTemplateColumns = "";
+            this.container.style.gridTemplateRows = "";
+        }
     }
 }
 customElements.define("nwm-grid", GridTool);
