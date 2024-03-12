@@ -42,3 +42,21 @@
 {
     height: 100%;
 }
+
+.tool-container
+{
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto;
+}
+.display-container
+{
+    display: grid;
+}
+.display-container
+{
+    width: 100%;
+    height: 100%;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto 1fr;
+}

@@ -1,9 +1,12 @@
-import gridTool from "./gridTool/GridTool.js"
+import BoxShadowTool from "./BoxShadowTool/BoxShadowTool.js";
+import GridTool from "./GridTool/GridTool.js"
 
-const tools = [gridTool];
+const tools = [GridTool, BoxShadowTool];
 const columns = document.querySelectorAll(".column");
 
 generateMenu();
+columns.forEach((col)=>GridTool.setDropZone(col));
+
 
 function generateMenu()
 {

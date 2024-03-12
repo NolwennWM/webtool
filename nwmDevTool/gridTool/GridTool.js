@@ -46,34 +46,13 @@ export default class GridTool extends Tool
                 fr: "Selectionnez seulement rows, columns ou both",
                 en: "Select rows, columns or both only."
             }
-        },
-        display:{
-            title:{
-                fr: "Copiez et adaptez le code ci-dessous",
-                en: "Copy and adapt the code below"
-            },
-            close: {
-                fr: "Fermer le Code",
-                en: "Close the Code"
-            },
-            copy:{
-                fr: "Copier dans le presse-papier",
-                en: "Copy in the clipboard"
-            },
-            copied:{
-                fr: "Code Copié",
-                en: "Code Copied"
-            },
-            html:{
-
-            }
         }
     }
     formInfo = [
-        {name:"columns", max:20, default:this.columns},
-        {name:"rows", max:20, default:this.rows},
-        {name:"columnGap", max:50, default:0},
-        {name:"rowGap", max:50, default:0},
+        {type:"number",name:"columns",min:0, max:20, default:this.columns, event:this.#setGrid.bind(this)},
+        {type:"number",name:"rows",min:0, max:20, default:this.rows, event:this.#setGrid.bind(this)},
+        {type:"number",name:"columnGap",min:0, max:50, default:0, event:this.#setGrid.bind(this)},
+        {type:"number",name:"rowGap",min:0, max:50, default:0, event:this.#setGrid.bind(this)},
     ];
     // fonctionnal properties :
     columnsId = 0;
@@ -86,8 +65,10 @@ export default class GridTool extends Tool
     constructor()
     {
         super();
+
         this.chooseLanguage();
         this.setTitle(this.text.title[this.lang]);
+        
         this.#init();
     }
     /**
@@ -95,13 +76,9 @@ export default class GridTool extends Tool
      */
     #init()
     {
-        // this.attachShadow({mode:"open"});
-        console.log(document.URL);
-
         this.setCSS("./nwmDevTool/gridTool/GridTool.css");
 
-        const container = document.createElement("div");
-        container.classList.add("grid-container");
+        this.generateDisplayFormTool();
 
         this.rowsForm = document.createElement("div");
         this.rowsForm.classList.add("rowsForm");
@@ -113,16 +90,10 @@ export default class GridTool extends Tool
         this.grid.classList.add("grid");
         this.grid.style.display = "grid";
 
-        this.form = document.createElement("div");
-        this.form.classList.add("form");
-
         this.#createForm();
 
-        container.append(this.columnsForm, this.rowsForm, this.grid);
-        this.container.append(container, this.form);
+        this.display.append(this.columnsForm, this.rowsForm, this.grid);
 
-        this.#setResponsive();
-        window.addEventListener("resize", this.#setResponsive.bind(this));
     }
     /**
      * Créer le formulaire de paramétrage de la grid.
@@ -130,24 +101,7 @@ export default class GridTool extends Tool
     #createForm()
     {
         const formInfo = this.formInfo;
-        for(const field of formInfo)
-        {
-            const fieldSet = document.createElement("fieldset");
-
-            const label = document.createElement("label");
-            label.textContent = this.text.form[field.name][this.lang];
-
-            const input = document.createElement("input");
-            input.type = "number";
-            input.min = 0;
-            input.max = field.max;
-            input.value = field.default;
-            input.name = field.name;
-            input.addEventListener("input", this.#setGrid.bind(this));
-
-            fieldSet.append(label, input);
-            this.form.append(fieldSet);
-        }
+        this.generateForm(formInfo, this.text.form);
 
         const codeBtn = document.createElement("button");
         codeBtn.textContent = this.text.form.codeButton[this.lang];
@@ -260,7 +214,7 @@ export default class GridTool extends Tool
             {
                 total++;
             } 
-            console.log(prev !== line || count === 0);
+            
             if(prev !== line || count === 0)
             {
                 if(total > 1)
@@ -308,15 +262,13 @@ export default class GridTool extends Tool
                 this.totalBox--;
             }
         }
-
-        console.log(this.totalBox);
     }
     #inputToSize(e)
     {
         const   id = e.target.dataset.id,
                 name = e.target.dataset.name;
         this[name + "Sizes"][id] = e.target.value;
-        console.log(this.columnsSizes, this.rowsSizes);
+        
         this.#setSizes(name);
     }
     /**
@@ -360,57 +312,8 @@ export default class GridTool extends Tool
     }
     #getCode()
     {
-        const overlay = document.createElement("div");
-        overlay.classList.add("overlay");
-
-        const displayBlock = document.createElement("div");
-        displayBlock.classList.add("displayBlock");
-        
-        const h3 = document.createElement("h3");
-        h3.textContent = this.text.display.title[this.lang];
-
-        const close = document.createElement("button");
-        close.classList.add("close");
-        close.textContent = this.text.display.close[this.lang];
-        
-        const copy = document.createElement("button");
-        copy.classList.add("copy");
-        copy.textContent = this.text.display.copy[this.lang];
-
-        const pre = document.createElement("pre");
-
-        const code = document.createElement("code");
-        code.innerHTML = this.#getCSS();
-
-        pre.append(copy, code);
-        displayBlock.append(h3, pre, close);
-        overlay.append(displayBlock);
-        this.shadowRoot.append(overlay);
-
-        copy.addEventListener("click", ()=>
-        {
-            navigator.clipboard.writeText(this.css.copy);
-            copy.textContent = this.text.display.copied[this.lang];
-            setTimeout(() => {
-                copy.textContent = this.text.display.copy[this.lang];
-                
-            }, 2000);
-        });
-        close.addEventListener("click", ()=>overlay.remove());
-    }
-    #setResponsive()
-    {
-        const sizes = this.getBoundingClientRect();
-        if(sizes.width>700)
-        {
-            this.container.style.gridTemplateColumns = "1fr auto";
-            this.container.style.gridTemplateRows = "1fr";
-        }
-        else
-        {
-            this.container.style.gridTemplateColumns = "";
-            this.container.style.gridTemplateRows = "";
-        }
+        const overlay = this.generateOverlay();
+        overlay.innerHTML = this.#getCSS();
     }
 }
 customElements.define("nwm-grid", GridTool);
