@@ -6,7 +6,7 @@
 }
 body
 {
-    height: 100dvh;
+    min-height: 100dvh;
 }
 .tools-header
 {
@@ -23,7 +23,7 @@ body
     padding: 0 1dvw;
     display: grid;
     width: 100%;
-    height: 100%;
+    min-height: 80dvh;
     grid-template-columns: 1fr;
     grid-template-rows: 2fr 1fr 1fr;
     gap: 1dvw 1dvh;
@@ -32,6 +32,8 @@ body
 {
     width: 100%;
     height: 100%;
+    background-color: rgba(47, 79, 79, 0.1);
+    border-radius: 5px;
 }
 .column.nwm-dragover
 {
@@ -40,6 +42,10 @@ body
 .column > *
 {
     margin: 5px auto;
+}
+.column:empty
+{
+    height: 25dvh;
 }
 .tools-container .column-center
 {
@@ -50,7 +56,7 @@ body
     .tools-container
     {
         grid-template-columns: 1fr 1fr;
-        grid-template-rows: 2fr 1fr;
+        grid-template-rows: 1fr 1fr;
     }
     .tools-container .column-center
     {

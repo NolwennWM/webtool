@@ -11,24 +11,26 @@
     --header-padding: 5px;
     --border-size: 5px;
 
+    container: nwmTool / size;
     border: var(--border-size) solid var(--header-bg-color);
     border-radius: 5px;
-    height: calc(var(--border-size) + var(--header-height) + var(--header-padding) * 2);
+    max-height: calc(var(--border-size) + var(--header-height) + var(--header-padding) * 2);
     /* max-height: 50dvh; */
+    height: 50dvh;
     width: 100%;
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
     overflow: hidden;
-    transition: height .3s linear;
+    transition: max-height .3s linear;
     background-color: antiquewhite;
-    /* aspect-ratio: 1/2; */
+    /* aspect-ratio: 1/1; */
     /* slow? */
     /* resize: vertical; */
 }
 :host(.open)
 {
-    height: 100%;
+    max-height: 100vh;
 }
 :host(.landscape)
 {
@@ -53,26 +55,10 @@
 
 .tool-container
 {
-    width: 100%;
+    width: 100cqw;
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 1fr auto;
-}
-:host(.landscape) .tool-container
-{
-    grid-template-columns: 1fr auto;
-    grid-template-rows: 1fr;
-}
-.display-container
-{
-    display: grid;
-}
-.display-container
-{
-    width: 100%;
-    height: 100%;
-    grid-template-columns: auto 1fr;
-    grid-template-rows: auto 1fr;
 }
 
 .form-container
@@ -82,15 +68,7 @@
     justify-content: space-around;
     gap: 5px;
     padding: 5px;
-}
-:host(.landscape) .form-container
-{
-    flex-direction: column;
-    justify-content: start;
-}
-:host(.landscape) .form-container fieldset
-{
-    width: 100%;
+    height: 100%;
 }
 .form-container fieldset
 {
@@ -104,4 +82,93 @@
 {
     /* grid-column: 1/-1; */
     width: 100%;
+}
+
+.overlay
+{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.displayBlock
+{
+    background-color: #121212;
+    color: antiquewhite;
+    padding: 20px;
+    border-radius: 5px;
+}
+.displayBlock h3
+{
+    margin-bottom: 20px;
+}
+.displayBlock pre
+{
+    background-color: #242424;
+    position: relative;
+    padding: 20px;
+    border:2px solid darkseagreen;
+    border-radius: 5px;
+    max-height: 50vh;
+    overflow-y: auto;
+}
+.displayBlock .copy
+{
+    position: absolute;
+    top: 0;
+    right: 0;
+    border: 1px dashed #121212;
+    border-top: none;
+    border-right: none;
+    background-color: darkseagreen;
+    padding: 5px;
+    cursor: pointer;
+}
+.displayBlock .copy:hover
+{
+    background-color: rgb(109, 175, 109);
+}
+.displayBlock .close
+{
+    display: block;
+    margin: 20px auto;
+    padding: 5px;
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;;
+    border-radius: 5px;
+}
+.displayBlock .selector{color: goldenrod;}
+.displayBlock .property{color: lightskyblue;}
+.displayBlock .value{color:chocolate;}
+@media screen and (min-width: 700px) 
+{
+    :host
+    {
+        /* aspect-ratio: 16/9; */
+    }
+}
+@container nwmTool (min-width: 700px)
+{
+    
+    .tool-container
+    {
+        grid-template-columns: 1fr auto;
+        grid-template-rows: 1fr;
+    }
+    .form-container
+    {
+        flex-direction: column;
+        justify-content: start;
+    }
+    .form-container fieldset
+    {
+        width: 100%;
+    }
 }

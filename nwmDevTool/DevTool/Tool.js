@@ -75,17 +75,6 @@ export default class Tool extends HTMLElement
 
         this.shadowRoot.append(header, this.container);
         
-        this.setResponsive = this.setResponsive.bind(this);
-        window.addEventListener("resize", this.setResponsive);
-    }
-    connectedCallback()
-    {
-        this.setResponsive();
-        window.addEventListener("resize", this.setResponsive);
-    }
-    disconnectedCallback()
-    {
-        window.removeEventListener("resize", this.setResponsive);
     }
     /**
      * Create a "link" tag and insert it in the shadowDOM
@@ -282,7 +271,6 @@ export default class Tool extends HTMLElement
      */
     generateDisplayFormTool()
     {
-        this.type = "display-form"
         this.display = document.createElement("div");
         this.display.classList.add("display-container");
         
@@ -290,25 +278,6 @@ export default class Tool extends HTMLElement
         this.form.classList.add("form-container");
 
         this.container.append(this.display, this.form);
-    }
-    /**
-     * if the element is too short, change the container grid.
-     */
-    setResponsive()
-    {
-        // TODO : utiliser une classe :
-        if(this.type != "display-form")return;
-
-        const {width} = this.getBoundingClientRect();
-
-        if(width > 700)
-        {
-            this.classList.add("landscape");
-        }
-        else
-        {
-            this.classList.remove("landscape");
-        }
     }
     /**
      * Generate form's input for the tool.
