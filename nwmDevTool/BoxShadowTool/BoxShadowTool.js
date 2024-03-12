@@ -47,7 +47,8 @@ export default class BoxShadowTool extends Tool
         {name:"blurRadius", max:20, default:0, event:this.#setBlur.bind(this)},
         {name:"spreadRadius", max:20, default:0, event:this.#setSpread.bind(this)},
         {name:"color", event:this.#setColor.bind(this)},
-        {name:"opacity", max:50, default:1, event:this.#setOpacity.bind(this)},
+        {name:"opacity", max:50, default:1, event:this.#setOpacity
+        .bind(this)},
     ];
     constructor()
     {

@@ -11,13 +11,16 @@
 }
 .rowsForm
 {
+    overflow-x: auto;
     grid-row: 2/3;
     grid-column: 1/2;
 }
 .columnsForm
 {
+    overflow-y: auto;
     grid-row: 1/2;
     grid-column: 2/3;
+    /* TODO : ne provoque pas l'overflow, faire du shadowdom un container? */
 }
 :where(.rowsForm, .columnsForm) input
 {
@@ -31,6 +34,7 @@
     border: 1px solid darkslategray;
     grid-row: 2/3;
     grid-column: 2/3;
+    aspect-ratio: 1/1;
 }
 .grid [class*="box"]
 {

@@ -65,8 +65,13 @@ export default class Tool extends HTMLElement
         close.innerHTML = "&#10060;";
         close.addEventListener("pointerup", this.#closeTool.bind(this));
 
+        const fs = document.createElement("span");
+        fs.classList.add("fullscreen");
+        fs.innerHTML = "&#x26F6;";
+        fs.addEventListener("pointerup", this.#toggleFullscreen.bind(this));
+
         this.#title = document.createElement("h2");
-        header.append(this.#title, close);
+        header.append(fs, this.#title, close);
 
         this.shadowRoot.append(header, this.container);
         
@@ -116,6 +121,18 @@ export default class Tool extends HTMLElement
     #closeTool()
     {
         this.remove();
+    }
+    /**
+     * Toggle the fullscreen of the tool
+     */
+    #toggleFullscreen()
+    {
+        if(!document.fullscreenElement)
+        {
+            this.requestFullscreen()
+            return;
+        }
+        document.exitFullscreen();
     }
     /**
      * set the language of the tool.
@@ -286,13 +303,11 @@ export default class Tool extends HTMLElement
 
         if(width > 700)
         {
-            this.container.style.gridTemplateColumns = "1fr auto";
-            this.container.style.gridTemplateRows = "1fr";
+            this.classList.add("landscape");
         }
         else
         {
-            this.container.style.gridTemplateColumns = "";
-            this.container.style.gridTemplateRows = "";
+            this.classList.remove("landscape");
         }
     }
     /**
