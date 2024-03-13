@@ -145,6 +145,7 @@ export default class Tool extends HTMLElement
     {
         this.draggable = true;
         window.ondragend = this.#DragAndDropOff.bind(this);
+        window.onpointerup = this.#DragAndDropOff.bind(this);
     }
     /**
      * desactive the drag and drop.
@@ -152,6 +153,7 @@ export default class Tool extends HTMLElement
     #DragAndDropOff()
     {
         window.ondragend = "";
+        window.onpointerup = ";"
         this.style.opacity = "";
         this.draggable = false;
     }
