@@ -24,6 +24,7 @@
     background-color: antiquewhite;
     aspect-ratio: 1/1;
     resize: vertical;
+    /* pointer-events: none; */
 }
 :host(.open)
 {
@@ -41,6 +42,7 @@
     padding: 5px;
     padding-top: 0;
     align-content: center;
+    /* pointer-events: all; */
     /* TODO : les grands titres ne sont pas adapté */
 }
 .tool-header h2
@@ -68,6 +70,14 @@
 }
 .form-container fieldset
 {
+    padding: 5px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.form-container fieldset
+{
     width: 45%;
 }
 .form-container input
@@ -79,70 +89,6 @@
     /* grid-column: 1/-1; */
     width: 100%;
 }
-
-.overlay
-{
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: rgba(0, 0, 0, 0.7);
-    z-index: 5;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.displayBlock
-{
-    background-color: #121212;
-    color: antiquewhite;
-    padding: 20px;
-    border-radius: 5px;
-}
-.displayBlock h3
-{
-    margin-bottom: 20px;
-}
-.displayBlock pre
-{
-    background-color: #242424;
-    position: relative;
-    padding: 20px;
-    border:2px solid darkseagreen;
-    border-radius: 5px;
-    max-height: 50vh;
-    overflow-y: auto;
-}
-.displayBlock .copy
-{
-    position: absolute;
-    top: 0;
-    right: 0;
-    border: 1px dashed #121212;
-    border-top: none;
-    border-right: none;
-    background-color: darkseagreen;
-    padding: 5px;
-    cursor: pointer;
-}
-.displayBlock .copy:hover
-{
-    background-color: rgb(109, 175, 109);
-}
-.displayBlock .close
-{
-    display: block;
-    margin: 20px auto;
-    padding: 5px;
-    background-color: #f8d7da;
-    color: #721c24;
-    border-color: #f5c6cb;;
-    border-radius: 5px;
-}
-.displayBlock .selector{color: goldenrod;}
-.displayBlock .property{color: lightskyblue;}
-.displayBlock .value{color:chocolate;}
 @media screen and (min-width: 700px) 
 {
     :host

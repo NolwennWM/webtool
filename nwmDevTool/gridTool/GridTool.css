@@ -49,13 +49,6 @@
 {
     border: 1px dashed black;
 }
-fieldset
-{
-    padding: 5px;
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-}
 
 @container nwmTool (min-width: 700px)
 {

@@ -1,16 +1,19 @@
-import BoxShadowTool from "./BoxShadowTool/BoxShadowTool.js";
+import BoxShadowTool from "./ShadowTool/ShadowTool.js";
 import GridTool from "./GridTool/GridTool.js"
 
 const tools = [GridTool, BoxShadowTool];
 const columns = document.querySelectorAll(".column");
+const btnTools = document.querySelector(".btn-tools");
+const navTools = document.querySelector(".tools-header nav");
 
 generateMenu();
 columns.forEach((col)=>GridTool.setDropZone(col));
-
+btnTools.addEventListener("pointerup", toggleMenu);
+navTools.addEventListener("pointerup", toggleMenu);
 
 function generateMenu()
 {
-    const menu = document.querySelector(".tools-header menu");
+    const menu = navTools.querySelector("menu");
     
     if(!menu) return;
 
@@ -33,4 +36,8 @@ function getSmallestColumn(a,b)
 {
     if(a.children.length<b.children.length) return a;
     else return b; 
+}
+function toggleMenu()
+{
+    navTools.classList.toggle("open");
 }

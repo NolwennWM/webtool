@@ -7,6 +7,7 @@
 body
 {
     min-height: 100dvh;
+    overflow-x: hidden;
 }
 .tools-header
 {
@@ -17,6 +18,51 @@ body
 .tools-header h1
 {
     text-align: center;
+}
+.tools-header nav
+{
+    position: absolute;
+    z-index: 3;
+    top: 0;
+    left: 0;
+    height: 100dvh;
+    width: 0;
+    background-color: rgba(0, 0, 0, 0.400);
+    backdrop-filter: blur(2px);
+    overflow: hidden;
+    transition: width 0.3s ease-in-out;
+}
+.tools-header nav.open
+{
+    width: 100dvw;
+}
+.tools-header nav menu
+{
+    background-color: rgb(250, 235, 215);
+    height: 100%;
+    width: fit-content;
+    max-width: 100%;
+    padding: 10px;
+    list-style: none;
+    overflow-x: hidden;
+}
+.tools-header nav menu li
+{
+    padding: 5px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    background: linear-gradient(145deg, #fffbe6, #e1d4c2);
+    box-shadow:  7px 2px 20px #d5c8b7,
+                 -7px -2px 20px #fffff7;
+}
+.tools-header nav menu li:hover
+{
+    background: #faebd7;
+}
+.tools-header nav menu li:active
+{
+    background: linear-gradient(145deg, #e1d4c2, #fffbe6);
 }
 .tools-container
 {
@@ -35,13 +81,17 @@ body
     background-color: rgba(47, 79, 79, 0.1);
     border-radius: 5px;
 }
-.column.nwm-dragover
-{
-    outline: 5px dashed black;
-}
 .column > *
 {
     margin: 5px auto;
+}
+.column.nwm-drag-over
+{
+    outline: 5px dashed black;
+}
+.column.nwm-drag-over > *
+{
+    pointer-events: none;
 }
 .column:empty
 {

@@ -1,6 +1,6 @@
 "use strict";
 
-import Tool from "../DevTool/Tool.js";
+import Tool from "../Tool/Tool.js";
 
 
 
@@ -16,28 +16,28 @@ export default class BoxShadowTool extends Tool
         },
         form:{
             offsetX: {
-                fr:"",
-                en:""
+                fr:"Décalage X",
+                en:"Offset X"
             },
             offsetY: {
-                fr:"",
-                en:""
+                fr:"Décalage Y",
+                en:"Offset Y"
             },
             blurRadius: {
-                fr:"",
-                en:""
+                fr:"Rayon du Flou",
+                en:"Blur Radius"
             },
             spreadRadius: {
-                fr:"",
-                en:""
+                fr:"Rayon de l'Étalement",
+                en:"Spread Radius"
             },
             color: {
-                fr:"",
-                en:""
+                fr:"Couleur",
+                en:"Color"
             },
             opacity: {
-                fr:"",
-                en:""
+                fr:"Opacité",
+                en:"Opacity"
             }
         }
     }
@@ -62,6 +62,7 @@ export default class BoxShadowTool extends Tool
 
     #init()
     {
+        this.setCSS("./nwmDevTool/ShadowTool/ShadowTool.css")
         this.generateDisplayFormTool();
         this.#createForm();
     }

@@ -1,5 +1,5 @@
 "use strict";
-import Tool from "../DevTool/Tool.js";
+import Tool from "../Tool/Tool.js";
 /**
  * Balise HTML créant un GRID generator
  */
@@ -76,7 +76,7 @@ export default class GridTool extends Tool
      */
     #init()
     {
-        this.setCSS("./nwmDevTool/gridTool/GridTool.css");
+        this.setCSS("./nwmDevTool/GridTool/GridTool.css");
 
         this.generateDisplayFormTool();
 
@@ -307,13 +307,15 @@ export default class GridTool extends Tool
             copyCode += `\trow-gap: ${this.css.rowGap}px;\r`;
         } 
 
-        this.css.copy = copyCode + "}";
-        return displayCode + "}";
+        copyCode += "}";
+        displayCode += "}";
+        return {display: displayCode, copy: copyCode}
     }
     #getCode()
     {
         const overlay = this.generateOverlay();
-        overlay.innerHTML = this.#getCSS();
+        overlay.setCSS = this.#getCSS();
+        overlay.displayCSS();
     }
 }
 customElements.define("nwm-grid", GridTool);

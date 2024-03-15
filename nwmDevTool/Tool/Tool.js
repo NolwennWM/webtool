@@ -1,36 +1,17 @@
 "use strict";
+
+import Overlay from "../OverlayTool/OverlayTool.js";
+
 /**
  * Abstract Class for HTML Dev Tools.
  */
 export default class Tool extends HTMLElement
 {
-    static dragoverClass = "nwm-dragover";
+    static dragoverClass = "nwm-drag-over";
+    static dragZoneClass = "nwm-drag-zone";
     static toolClass = "nwm-tool";
     #title;
     lang = "fr";
-    #text = {
-        display:{
-            title:{
-                fr: "Copiez et adaptez le code ci-dessous",
-                en: "Copy and adapt the code below"
-            },
-            close: {
-                fr: "Fermer le Code",
-                en: "Close the Code"
-            },
-            copy:{
-                fr: "Copier dans le presse-papier",
-                en: "Copy in the clipboard"
-            },
-            copied:{
-                fr: "Code Copié",
-                en: "Code Copied"
-            },
-            html:{
-
-            }
-        }
-    }
     
     constructor()
     {
@@ -44,7 +25,7 @@ export default class Tool extends HTMLElement
     {
         this.attachShadow({mode:"open"});
 
-        this.setCSS("./nwmDevTool/DevTool/Tool.css");
+        this.setCSS("./nwmDevTool/Tool/Tool.css");
 
         this.classList.add("open", this.constructor.toolClass)
         this.draggable = false;
@@ -85,7 +66,13 @@ export default class Tool extends HTMLElement
         const style = document.createElement("link");
         style.rel = "stylesheet";
         style.href = href;
-        this.shadowRoot.prepend(style);
+        if(!this.lastStyle)
+        {
+            this.shadowRoot.prepend(style);
+            this.lastStyle = style;
+            return;
+        }
+        this.lastStyle.after(style);
     }
     /**
      * set the title of the tool.
@@ -190,10 +177,10 @@ export default class Tool extends HTMLElement
      */
     static setDropZone(dropZone)
     {
-        
+        dropZone.classList.add(this.dragZoneClass);
         dropZone.addEventListener("dragover", (e)=>e.preventDefault());
-        dropZone.addEventListener("dragenter", (e)=>dropZone.classList.add(this.dragoverClass));
-        dropZone.addEventListener("dragleave", (e)=>dropZone.classList.remove(this.dragoverClass));
+        dropZone.addEventListener("dragenter", this.onDragEnter.bind(this));
+        dropZone.addEventListener("dragleave", ()=>dropZone.classList.remove(this.dragoverClass));
         dropZone.addEventListener("drop", (e)=>this.onDrop(dropZone, e));
     }
     /**
@@ -207,10 +194,10 @@ export default class Tool extends HTMLElement
         const {clientY, target} = dropEvent;
         const data = dropEvent.dataTransfer.getData("text");
         const src = document.querySelector("#"+data);
-
+        console.log(src, target);
         if(src && src != target)
         {
-            if(target.classList.contains(this.dragoverClass))
+            if(target.classList.contains(this.dragZoneClass))
             {
                 dropZone.append(src);
             }
@@ -224,49 +211,31 @@ export default class Tool extends HTMLElement
         dropZone.classList.remove(this.dragoverClass);
     }
     /**
+     * Add a class when we drag a tool over a dragzone
+     * @param {DragEvent} e DragEvent gave by a dragenter
+     */
+    static onDragEnter(e)
+    {
+        let target;
+        if(e.target.classList.contains(this.dragZoneClass))
+        {
+            target = e.target
+        }
+        else
+        {
+            target = e.target.closest('.'+this.dragZoneClass);
+        }
+        target.classList.add(this.dragoverClass);
+    }
+    /**
      * generate an overlay for display code, can be closed.
      * @returns {HTMLElement} "code" tag.
      */
     generateOverlay()
     {
-        const overlay = document.createElement("div");
-        overlay.classList.add("overlay");
+        const overlay = new Overlay(this.lang);
 
-        const displayBlock = document.createElement("div");
-        displayBlock.classList.add("displayBlock");
-        
-        const h3 = document.createElement("h3");
-        h3.textContent = this.#text.display.title[this.lang];
-
-        const close = document.createElement("button");
-        close.classList.add("close");
-        close.textContent = this.#text.display.close[this.lang];
-        
-        const copy = document.createElement("button");
-        copy.classList.add("copy");
-        copy.textContent = this.#text.display.copy[this.lang];
-
-        const pre = document.createElement("pre");
-
-        const code = document.createElement("code");
-        
-        pre.append(copy, code);
-        displayBlock.append(h3, pre, close);
-        overlay.append(displayBlock);
-        this.shadowRoot.append(overlay);
-
-        copy.addEventListener("click", ()=>
-        {
-            navigator.clipboard.writeText(this.css.copy);
-            copy.textContent = this.#text.display.copied[this.lang];
-            setTimeout(() => {
-                copy.textContent = this.#text.display.copy[this.lang];
-                
-            }, 2000);
-        });
-        close.addEventListener("click", ()=>overlay.remove());
-
-        return code;
+        return overlay;
     }
     /**
      * Generate and append a div for display and a div for form
