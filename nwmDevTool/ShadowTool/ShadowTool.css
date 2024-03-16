@@ -1,0 +1,49 @@
+.tool-container
+{
+    overflow: hidden;
+}
+
+.form-container
+{
+    overflow-y: auto;
+    overflow-x: hidden;
+    /* flex-wrap: nowrap; */
+    flex-direction: row;
+    scrollbar-width: thin;
+    justify-content: space-evenly;
+    align-items: start;
+    position: relative;
+}
+
+.display-container
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5cqh 5cqw;
+    position: relative;
+}
+.box-shadow-target
+{
+    border: 2px solid black;
+    border-radius: 10px;
+    height: 30cqh;
+    width: 30cqw;
+}
+.add-button
+{
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: fit-content;
+}
+.code-button
+{
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+.shadow-set
+{
+    max-width: 30%;
+}

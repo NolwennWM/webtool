@@ -12,6 +12,14 @@ export default class Tool extends HTMLElement
     static toolClass = "nwm-tool";
     #title;
     lang = "fr";
+    #text = {
+        form: {
+            codeButton:{
+                fr: "Voir le Code",
+                en: "See the Code"
+            }
+        }
+    }
     
     constructor()
     {
@@ -39,6 +47,7 @@ export default class Tool extends HTMLElement
         header.addEventListener("pointerup", this.#toggleTool.bind(this));
         header.addEventListener("pointerdown", this.#DragAndDropOn.bind(this));
 
+        this.header = header;
         this.addEventListener("dragstart", this.#dragStart);
 
         const close = document.createElement("span");
@@ -265,16 +274,31 @@ export default class Tool extends HTMLElement
             label.textContent = text[field.name][this.lang];
 
             const input = document.createElement("input");
-
-            input.type = field.type;
-            input.min = field.min??"";
-            input.max = field.max??"";
-            input.value = field.default??"";
-            input.name = field.name;
+            for (const attr in field) 
+            {
+                if(attr === "event")continue;
+                input[attr] = field[attr];   
+            }
             input.addEventListener("input", field.event);
 
             fieldSet.append(label, input);
             this.form.append(fieldSet);
         }
+    }
+    generateCodeButton(parent,event)
+    {
+        const codeBtn = document.createElement("button");
+        codeBtn.textContent = this.#text.form.codeButton[this.lang];
+        codeBtn.classList.add("code-button");
+        codeBtn.addEventListener("click", event.bind(this));
+        parent.append(codeBtn);
+    }
+    setHeight()
+    {
+        // TODO: garder  ou supprimer cette fonction ?
+        const hHeight = this.header.getBoundingClientRect().height;
+        const cHeight = this.container.getBoundingClientRect().height;
+        
+        this.style.height = Math.ceil(cHeight+hHeight)+"px";
     }
 }

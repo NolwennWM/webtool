@@ -31,10 +31,6 @@ export default class GridTool extends Tool
             rowGap:{
                 fr: "Écart des Rangées (en px)",
                 en: "Rows Gap (in px)"
-            },
-            codeButton:{
-                fr: "Voir le Code",
-                en: "See the Code"
             }
         },
         errors:{
@@ -49,10 +45,10 @@ export default class GridTool extends Tool
         }
     }
     formInfo = [
-        {type:"number",name:"columns",min:0, max:20, default:this.columns, event:this.#setGrid.bind(this)},
-        {type:"number",name:"rows",min:0, max:20, default:this.rows, event:this.#setGrid.bind(this)},
-        {type:"number",name:"columnGap",min:0, max:50, default:0, event:this.#setGrid.bind(this)},
-        {type:"number",name:"rowGap",min:0, max:50, default:0, event:this.#setGrid.bind(this)},
+        {type:"number",name:"columns",min:0, max:20, value:this.columns, event:this.#setGrid.bind(this)},
+        {type:"number",name:"rows",min:0, max:20, value:this.rows, event:this.#setGrid.bind(this)},
+        {type:"number",name:"columnGap",min:0, max:50, value:0, event:this.#setGrid.bind(this)},
+        {type:"number",name:"rowGap",min:0, max:50, value:0, event:this.#setGrid.bind(this)},
     ];
     // fonctionnal properties :
     columnsId = 0;
@@ -93,7 +89,8 @@ export default class GridTool extends Tool
         this.#createForm();
 
         this.display.append(this.columnsForm, this.rowsForm, this.grid);
-
+        
+        this.setHeight();
     }
     /**
      * Créer le formulaire de paramétrage de la grid.
@@ -103,10 +100,7 @@ export default class GridTool extends Tool
         const formInfo = this.formInfo;
         this.generateForm(formInfo, this.text.form);
 
-        const codeBtn = document.createElement("button");
-        codeBtn.textContent = this.text.form.codeButton[this.lang];
-        codeBtn.addEventListener("click", this.#getCode.bind(this));
-        this.form.append(codeBtn);
+        this.generateCodeButton(this.form, this.#getCode);
         
         this.#createDivs();
         this.#setTemplate(this.columns, "columns");
