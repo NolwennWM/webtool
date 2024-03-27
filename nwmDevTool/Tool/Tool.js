@@ -24,6 +24,7 @@ export default class Tool extends HTMLElement
     constructor()
     {
         super();
+        this.moving = this.#movingTool.bind(this);
         this.#init();
     }
     /**
@@ -36,7 +37,9 @@ export default class Tool extends HTMLElement
         this.setCSS("./nwmDevTool/Tool/Tool.css");
 
         this.classList.add("open", this.constructor.toolClass)
-        this.draggable = false;
+        this.addEventListener("pointerdown", this.#activeTool.bind(this));
+        this.#activeTool();
+        // this.draggable = false;
         this.#generateID();
 
         this.container = document.createElement("div");
@@ -44,24 +47,32 @@ export default class Tool extends HTMLElement
 
         const header = document.createElement("div");
         header.classList.add("tool-header");
-        header.addEventListener("pointerup", this.#toggleTool.bind(this));
-        header.addEventListener("pointerdown", this.#DragAndDropOn.bind(this));
+        header.addEventListener("pointerdown", this.#startMoveTool.bind(this));
+        header.addEventListener("pointerup", this.#endMoveTool.bind(this));
 
         this.header = header;
-        this.addEventListener("dragstart", this.#dragStart);
+        // this.addEventListener("dragstart", this.#dragStart);
+        const btnsHeader = document.createElement("div")
+        btnsHeader.classList.add("btns-container")
 
-        const close = document.createElement("span");
-        close.classList.add("close");
+        const close = document.createElement("button");
+        close.classList.add("close", "btn");
         close.innerHTML = "&#10060;";
         close.addEventListener("pointerup", this.#closeTool.bind(this));
+        
+        const toggle = document.createElement("button");
+        toggle.classList.add("toggle", "btn");
+        toggle.innerHTML = "&#x23AF;";
+        toggle.addEventListener("pointerup", this.#toggleTool.bind(this));
 
-        const fs = document.createElement("span");
-        fs.classList.add("fullscreen");
+        const fs = document.createElement("button");
+        fs.classList.add("fullscreen", "btn");
         fs.innerHTML = "&#x26F6;";
         fs.addEventListener("pointerup", this.#toggleFullscreen.bind(this));
 
         this.#title = document.createElement("h2");
-        header.append(fs, this.#title, close);
+        btnsHeader.append(toggle,fs, close)
+        header.append(this.#title, btnsHeader);
 
         this.shadowRoot.append(header, this.container);
         
@@ -135,35 +146,6 @@ export default class Tool extends HTMLElement
         this.lang = lang;
     }
     /**
-     * Active drag and drop
-     */
-    #DragAndDropOn()
-    {
-        this.draggable = true;
-        window.ondragend = this.#DragAndDropOff.bind(this);
-        window.onpointerup = this.#DragAndDropOff.bind(this);
-    }
-    /**
-     * desactive the drag and drop.
-     */
-    #DragAndDropOff()
-    {
-        window.ondragend = "";
-        window.onpointerup = ";"
-        this.style.opacity = "";
-        this.draggable = false;
-    }
-    /**
-     * prepare the tool for a drag and drop.
-     * @param {DragEvent} e DragEvent gave by a dragStart
-     */
-    #dragStart(e)
-    {  
-        this.style.opacity = '0.8';
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData("text/plain", this.id);
-    }
-    /**
      * Generate uniq id for the tool.
      * @param {number} length size of the id
      */
@@ -180,61 +162,43 @@ export default class Tool extends HTMLElement
         }
         this.id = id;
     }
-    /**
-     * set Event Listener on HTMLElement for the drag and drop.
-     * @param {HTMLElement} dropZone HTMLElement where the tools can be dropped
-     */
-    static setDropZone(dropZone)
+    #activeTool()
     {
-        dropZone.classList.add(this.dragZoneClass);
-        dropZone.addEventListener("dragover", (e)=>e.preventDefault());
-        dropZone.addEventListener("dragenter", this.onDragEnter.bind(this));
-        dropZone.addEventListener("dragleave", ()=>dropZone.classList.remove(this.dragoverClass));
-        dropZone.addEventListener("drop", (e)=>this.onDrop(dropZone, e));
-    }
-    /**
-     * Move the dragged tool to an empty column or before or after an other tool.
-     * @param {HTMLElement} dropZone HTMLElement where the element can be dropped
-     * @param {DragEvent} dropEvent DragEvent gave by a drop.
-     */
-    static onDrop(dropZone, dropEvent)
-    {
+        if(window.activeNWMTool === this) return;
+        if(window.activeNWMTool)
+        {
+            window.activeNWMTool.style.zIndex = "";
+        }
+        this.style.zIndex = 10;
+        window.activeNWMTool = this;
 
-        const {clientY, target} = dropEvent;
-        const data = dropEvent.dataTransfer.getData("text");
-        const src = document.querySelector("#"+data);
-        console.log(src, target);
-        if(src && src != target)
-        {
-            if(target.classList.contains(this.dragZoneClass))
-            {
-                dropZone.append(src);
-            }
-            else if(target.classList.contains(this.toolClass))
-            {
-                const {height, top} = target.getBoundingClientRect();
-                if(top+height/2 > clientY)target.before(src);
-                else target.after(src);
-            }
-        }
-        dropZone.classList.remove(this.dragoverClass);
     }
-    /**
-     * Add a class when we drag a tool over a dragzone
-     * @param {DragEvent} e DragEvent gave by a dragenter
-     */
-    static onDragEnter(e)
+    #startMoveTool(e)
     {
-        let target;
-        if(e.target.classList.contains(this.dragZoneClass))
-        {
-            target = e.target
-        }
-        else
-        {
-            target = e.target.closest('.'+this.dragZoneClass);
-        }
-        target.classList.add(this.dragoverClass);
+        const {x, y} = this.getBoundingClientRect();
+        this.startPosition = {toolX : x- e.clientX, toolY: y - e.clientY};
+        this.classList.add("moving");
+        document.addEventListener("pointermove", this.moving);
+    }
+    #endMoveTool()
+    {
+        this.classList.remove("moving");
+        document.removeEventListener("pointermove", this.moving);
+
+        const {x, y,width} = this.getBoundingClientRect();
+        const headerHeight = this.header.getBoundingClientRect().height;
+
+        if(y<0) this.style.top = "0";
+        if(y>window.innerHeight) this.style.top = window.innerHeight - headerHeight+"px";
+        if(x+width<150)this.style.left = 150-width+"px";
+        if(x>window.innerWidth-150)this.style.left = window.innerWidth-150 + "px";
+    }
+    #movingTool(e)
+    {
+        const {clientX,clientY} = e;
+        
+        this.style.top = this.startPosition.toolY+ clientY+"px";
+        this.style.left = this.startPosition.toolX+ clientX+"px";
     }
     /**
      * generate an overlay for display code, can be closed.
@@ -302,3 +266,89 @@ export default class Tool extends HTMLElement
         this.style.height = Math.ceil(cHeight+hHeight)+"px";
     }
 }
+// /**
+//  * Active drag and drop
+//  */
+// #DragAndDropOn()
+// {
+//     this.draggable = true;
+//     window.ondragend = this.#DragAndDropOff.bind(this);
+//     window.onpointerup = this.#DragAndDropOff.bind(this);
+// }
+// /**
+//  * desactive the drag and drop.
+//  */
+// #DragAndDropOff()
+// {
+//     window.ondragend = "";
+//     window.onpointerup = ";"
+//     this.style.opacity = "";
+//     this.draggable = false;
+// }
+// /**
+//  * prepare the tool for a drag and drop.
+//  * @param {DragEvent} e DragEvent gave by a dragStart
+//  */
+// #dragStart(e)
+// {  
+//     this.style.opacity = '0.8';
+//     e.dataTransfer.effectAllowed = 'move';
+//     e.dataTransfer.setData("text/plain", this.id);
+// }
+
+    // /**
+    //  * set Event Listener on HTMLElement for the drag and drop.
+    //  * @param {HTMLElement} dropZone HTMLElement where the tools can be dropped
+    //  */
+    // static setDropZone(dropZone)
+    // {
+    //     dropZone.classList.add(this.dragZoneClass);
+    //     dropZone.addEventListener("dragover", (e)=>e.preventDefault());
+    //     dropZone.addEventListener("dragenter", this.onDragEnter.bind(this));
+    //     dropZone.addEventListener("dragleave", ()=>dropZone.classList.remove(this.dragoverClass));
+    //     dropZone.addEventListener("drop", (e)=>this.onDrop(dropZone, e));
+    // }
+    // /**
+    //  * Move the dragged tool to an empty column or before or after an other tool.
+    //  * @param {HTMLElement} dropZone HTMLElement where the element can be dropped
+    //  * @param {DragEvent} dropEvent DragEvent gave by a drop.
+    //  */
+    // static onDrop(dropZone, dropEvent)
+    // {
+
+    //     const {clientY, target} = dropEvent;
+    //     const data = dropEvent.dataTransfer.getData("text");
+    //     const src = document.querySelector("#"+data);
+    //     console.log(src, target);
+    //     if(src && src != target)
+    //     {
+    //         if(target.classList.contains(this.dragZoneClass))
+    //         {
+    //             dropZone.append(src);
+    //         }
+    //         else if(target.classList.contains(this.toolClass))
+    //         {
+    //             const {height, top} = target.getBoundingClientRect();
+    //             if(top+height/2 > clientY)target.before(src);
+    //             else target.after(src);
+    //         }
+    //     }
+    //     dropZone.classList.remove(this.dragoverClass);
+    // }
+    // /**
+    //  * Add a class when we drag a tool over a dragzone
+    //  * @param {DragEvent} e DragEvent gave by a dragenter
+    //  */
+    // static onDragEnter(e)
+    // {
+    //     let target;
+    //     if(e.target.classList.contains(this.dragZoneClass))
+    //     {
+    //         target = e.target
+    //     }
+    //     else
+    //     {
+    //         target = e.target.closest('.'+this.dragZoneClass);
+    //     }
+    //     target.classList.add(this.dragoverClass);
+    // }

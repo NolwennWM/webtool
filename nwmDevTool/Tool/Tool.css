@@ -15,7 +15,7 @@
     border: var(--border-size) solid var(--header-bg-color);
     border-radius: 5px;
     max-height: calc(var(--border-size) + var(--header-height) + var(--header-padding) * 2);
-    width: 100%;
+    width: 50%;
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
@@ -23,7 +23,8 @@
     transition: max-height .3s linear;
     background-color: antiquewhite;
     aspect-ratio: 1/1;
-    resize: vertical;
+    resize:both;
+    position: absolute;
     /* pointer-events: none; */
 }
 :host(.open)
@@ -34,23 +35,50 @@
 {
     background-color: var(--header-bg-color);
     text-align: center;
-    cursor: pointer;
+    cursor: grab;
     height: calc(var(--header-height) + var(--header-padding) * 2);
     /* max-height: 10cqh; */
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: 1fr auto;
     align-items: center;
     padding: 5px;
     padding-top: 0;
     align-content: center;
     /* pointer-events: all; */
     /* TODO : les grands titres ne sont pas adapté */
+    :host(.moving) &
+    {
+        cursor: grabbing;
+    }
+    & h2
+    {
+        font-size: clamp(1em, 7cqw, 2em);
+        user-select: none;
+    }
+    & .btns-container 
+    {
+        width: 99px;
+        height: 33px;
+        & .btn
+        {
+            display: inline-block;
+            width: 33px;
+            height: inherit;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            &:hover
+            {
+                background-color: darkslategray;
+            }
+            &.close:hover
+            {
+                background-color: red;
+            }
+        }
+    }
+    
 }
-.tool-header h2
-{
-    font-size: clamp(1em, 7cqw, 2em);
-}
-
 .tool-container
 {
     width: 100cqw;
@@ -68,34 +96,30 @@
     gap: 5px;
     padding: 5px;
     height: 100%;
-}
-.form-container fieldset
-{
-    padding: 5px;
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-}
-
-.form-container fieldset
-{
-    width: 45%;
-}
-.form-container input
-{
-    width: 4em;
-}
-.form-container button:last-child
-{
-    /* grid-column: 1/-1; */
-    width: 100%;
+    & fieldset
+    {
+        padding: 5px;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        width: 45%;
+    }
+    & input
+    {
+        width: 4em;
+    }
+    & button:last-child
+    {
+        /* grid-column: 1/-1; */
+        width: 100%;
+    }
 }
 @media screen and (min-width: 700px) 
 {
-    :host
+   /* :host
     {
-        /* aspect-ratio: 16/9; */
-    }
+         aspect-ratio: 16/9;
+    } */
 }
 @container nwmTool (min-width: 700px)
 {
@@ -110,9 +134,9 @@
     {
         flex-direction: column;
         justify-content: start;
-    }
-    .form-container fieldset
-    {
-        width: 100%;
+        & fieldset
+        {
+            width: 100%;
+        }
     }
 }

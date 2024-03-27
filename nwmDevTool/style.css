@@ -6,8 +6,8 @@
 }
 body
 {
-    min-height: 100dvh;
-    overflow-x: hidden;
+    height: 100dvh;
+    overflow: hidden;
 }
 .tools-header
 {
@@ -67,14 +67,15 @@ body
 .tools-container
 {
     padding: 0 1dvw;
-    display: grid;
+    /* display: grid; */
     width: 100%;
     min-height: 80dvh;
-    grid-template-columns: 1fr;
+    /* position: relative; */
+    /* grid-template-columns: 1fr;
     grid-template-rows: 2fr 1fr 1fr;
-    gap: 1dvw 1dvh;
+    gap: 1dvw 1dvh; */
 }
-.column
+/* .column
 {
     width: 100%;
     height: 100%;
@@ -100,7 +101,7 @@ body
 .tools-container .column-center
 {
     grid-row: 1/2;
-}
+} 
 @media screen and (min-width: 550px) 
 {
     .tools-container
@@ -129,4 +130,4 @@ body
     {
         grid-column: auto;
     }
-}
+}*/
