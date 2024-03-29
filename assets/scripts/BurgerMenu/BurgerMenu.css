@@ -1,3 +1,13 @@
+*, ::before, ::after
+{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+:host
+{
+    --burger-cross-duration: .5s;
+}
 .container
 {
     position: absolute;
@@ -41,7 +51,7 @@
         background-color: black;
         position: absolute;
         left: 0;
-        transition: top 1s, rotate 1s, opacity 1s;
+        transition: top var(--burger-cross-duration), rotate var(--burger-cross-duration), opacity var(--burger-cross-duration);
         &:nth-child(1)
         {
             top: 0;
@@ -76,11 +86,12 @@
     height: 100%;
     width: fit-content;
     max-width: 100%;
-    padding: 10px;
+    padding: 50px 10px;
     list-style: none;
     overflow-x: hidden;
     & li
     {
+        list-style: none;
         padding: 5px;
         cursor: pointer;
         margin-bottom: 10px;

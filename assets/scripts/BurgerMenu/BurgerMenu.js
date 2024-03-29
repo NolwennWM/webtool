@@ -55,22 +55,38 @@ export default class BurgerMenu extends HTMLElement
      */
     toggleMenuEvent(container, button, span)
     {
-        let open;
+        let open = false, transitioning = false;
         button.addEventListener("click", ()=>{
-            open = button.classList.toggle("open");
+            if(transitioning)return;
+            transitioning = true;
+            if(open) 
+            {
+                button.classList.remove("move");
+                container.classList.remove("open");
+            }
+            else button.classList.add("open");
+            open = !open;
         });
         container.addEventListener("click", e=>{
             if(e.target !== container)return;
-            button.classList.remove("open");
+            button.classList.remove("move");
             container.classList.remove("open");
+            open = false;
         });
-        span.addEventListener("transitionend", (e)=>{
-            if(e.propertyName !== "rotate")return;
-            if(open)
+        // span.addEventListener("transitionend", (e)=>{
+        //     if(e.propertyName !== "rotate" || !open)return;
+            
+        // })
+        button.addEventListener("transitionend", (e)=>{
+            if(e.propertyName === "opacity" && open)
             {
                 button.classList.add("move");
+                container.classList.add("open");
+                return;
             }
-            container.classList.toggle("open", open);
+            transitioning = false;
+            if(open)return
+            button.classList.remove("open");
         })
     }
 }
