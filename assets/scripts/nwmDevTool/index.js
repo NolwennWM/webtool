@@ -1,22 +1,26 @@
 import BoxShadowTool from "./ShadowTool/ShadowTool.js";
-import GridTool from "./GridTool/GridTool.js"
+import GridTool from "./GridTool/GridTool.js";
+import BurgerMenu from "../BurgerMenu/BurgerMenu.js";
 
 const tools = [GridTool, BoxShadowTool];
-const columns = document.querySelectorAll(".column");
-const btnTools = document.querySelector(".btn-tools");
-const navTools = document.querySelector(".tools-header nav");
+// const columns = document.querySelectorAll(".column");
+// const btnTools = document.querySelector(".btn-tools");
+// const navTools = document.querySelector(".tools-header nav");
 const container = document.querySelector(".tools-container");
 
 generateMenu();
-columns.forEach((col)=>GridTool.setDropZone(col));
-btnTools.addEventListener("pointerup", toggleMenu);
-navTools.addEventListener("pointerup", toggleMenu);
+// columns.forEach((col)=>GridTool.setDropZone(col));
+// btnTools.addEventListener("pointerup", toggleMenu);
+// navTools.addEventListener("pointerup", toggleMenu);
 
 function generateMenu()
 {
-    const menu = navTools.querySelector("menu");
+    const nav = document.querySelector(".tools-menu");
     
-    if(!menu) return;
+    if(!nav) return;
+
+    const menu = document.createElement("menu");
+    nav.appendNav(menu);
 
     for (const tool of tools) 
     {
@@ -37,7 +41,3 @@ function appendTool()
 //     if(a.children.length<b.children.length) return a;
 //     else return b; 
 // }
-function toggleMenu()
-{
-    navTools.classList.toggle("open");
-}
