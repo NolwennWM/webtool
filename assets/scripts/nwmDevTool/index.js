@@ -26,7 +26,6 @@ function generateMenu()
         menu.append(li);
     }
 }
-
 function appendTool()
 {
     // const column = [...columns].reduce(getSmallestColumn)

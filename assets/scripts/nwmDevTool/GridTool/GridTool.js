@@ -5,6 +5,7 @@ import Tool from "../Tool/Tool.js";
  */
 export default class GridTool extends Tool
 {
+    #href = "GridTool/GridTool.css";
     // default value :
     columns = 2;
     rows = 2;
@@ -72,7 +73,7 @@ export default class GridTool extends Tool
      */
     #init()
     {
-        this.setCSS("./nwmDevTool/GridTool/GridTool.css");
+        this.setCSS(this.#href);
 
         this.generateDisplayFormTool();
 

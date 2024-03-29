@@ -4,7 +4,7 @@
  */
 export default class Overlay extends HTMLElement
 {
-
+    #href = "./assets/scripts/nwmDevTool/OverlayTool/OverlayTool.css";
     #text = {
         display:{
             title:{
@@ -41,7 +41,7 @@ export default class Overlay extends HTMLElement
 
         const style = document.createElement("link");
         style.rel = "stylesheet";
-        style.href = "./nwmDevTool/OverlayTool/OverlayTool.css";
+        style.href = this.#href;
 
         this.shadowRoot.prepend(style);
         const displayBlock = document.createElement("div");

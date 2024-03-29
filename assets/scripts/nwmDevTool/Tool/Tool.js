@@ -7,10 +7,10 @@ import Overlay from "../OverlayTool/OverlayTool.js";
  */
 export default class Tool extends HTMLElement
 {
-    static dragoverClass = "nwm-drag-over";
-    static dragZoneClass = "nwm-drag-zone";
+    // static dragoverClass = "nwm-drag-over";
+    // static dragZoneClass = "nwm-drag-zone";
     static toolClass = "nwm-tool";
-    #title;
+    #href = "./assets/scripts/nwmDevTool/"
     lang = "fr";
     #text = {
         form: {
@@ -20,11 +20,14 @@ export default class Tool extends HTMLElement
             }
         }
     }
+    #title;
+    #events= {};
     
     constructor()
     {
         super();
-        this.moving = this.#movingTool.bind(this);
+        this.#events.movingTool = this.#movingTool.bind(this);
+        this.#events.endMoveTool = this.#endMoveTool.bind(this);
         this.#init();
     }
     /**
@@ -34,7 +37,7 @@ export default class Tool extends HTMLElement
     {
         this.attachShadow({mode:"open"});
 
-        this.setCSS("./nwmDevTool/Tool/Tool.css");
+        this.setCSS("Tool/Tool.css");
 
         this.classList.add("open", this.constructor.toolClass)
         this.addEventListener("pointerdown", this.#activeTool.bind(this));
@@ -48,7 +51,6 @@ export default class Tool extends HTMLElement
         const header = document.createElement("div");
         header.classList.add("tool-header");
         header.addEventListener("pointerdown", this.#startMoveTool.bind(this));
-        header.addEventListener("pointerup", this.#endMoveTool.bind(this));
 
         this.header = header;
         // this.addEventListener("dragstart", this.#dragStart);
@@ -78,6 +80,20 @@ export default class Tool extends HTMLElement
         
     }
     /**
+     * LifeCycle called if the tool is added to DOM
+     */
+    connectedCallback()
+    {
+        document.addEventListener("pointerup", this.#events.endMoveTool);
+    }
+    /**
+     * LifeCycle called if the tool is removed from DOM
+     */
+    disconnectedCallback()
+    {
+        document.removeEventListener("pointerup", this.#events.endMoveTool);
+    }
+    /**
      * Create a "link" tag and insert it in the shadowDOM
      * @param {string} href href for a css file.
      */
@@ -85,7 +101,7 @@ export default class Tool extends HTMLElement
     {
         const style = document.createElement("link");
         style.rel = "stylesheet";
-        style.href = href;
+        style.href = this.#href+href;
         if(!this.lastStyle)
         {
             this.shadowRoot.prepend(style);
@@ -162,6 +178,9 @@ export default class Tool extends HTMLElement
         }
         this.id = id;
     }
+    /**
+     * put the last clicked tool over the others
+     */
     #activeTool()
     {
         if(window.activeNWMTool === this) return;
@@ -173,17 +192,25 @@ export default class Tool extends HTMLElement
         window.activeNWMTool = this;
 
     }
+    /**
+     * Start the movement of the tool
+     * @param {PointerEvent} e pointerdown event
+     */
     #startMoveTool(e)
     {
+        if(e.target !== this.header && e.target !== this.#title)return;
         const {x, y} = this.getBoundingClientRect();
         this.startPosition = {toolX : x- e.clientX, toolY: y - e.clientY};
         this.classList.add("moving");
-        document.addEventListener("pointermove", this.moving);
+        document.addEventListener("pointermove", this.#events.movingTool);
     }
+    /**
+     * Set end to the movement of the tool and check if the last position is valid
+     */
     #endMoveTool()
     {
         this.classList.remove("moving");
-        document.removeEventListener("pointermove", this.moving);
+        document.removeEventListener("pointermove", this.#events.movingTool);
 
         const {x, y,width} = this.getBoundingClientRect();
         const headerHeight = this.header.getBoundingClientRect().height;
@@ -193,6 +220,10 @@ export default class Tool extends HTMLElement
         if(x+width<150)this.style.left = 150-width+"px";
         if(x>window.innerWidth-150)this.style.left = window.innerWidth-150 + "px";
     }
+    /**
+     * Move the tool
+     * @param {PointerEvent} e pointermove event
+     */
     #movingTool(e)
     {
         const {clientX,clientY} = e;
@@ -249,6 +280,11 @@ export default class Tool extends HTMLElement
             this.form.append(fieldSet);
         }
     }
+    /**
+     * Generate a button for show the code
+     * @param {HTMLElement} parent parent of the code button
+     * @param {CallableFunction} event function to send in callback of the event listener  
+     */
     generateCodeButton(parent,event)
     {
         const codeBtn = document.createElement("button");

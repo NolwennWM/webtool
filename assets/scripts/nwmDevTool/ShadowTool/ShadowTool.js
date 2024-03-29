@@ -7,6 +7,7 @@ import Tool from "../Tool/Tool.js";
 export default class BoxShadowTool extends Tool
 {
     shadows = [];
+    #href = "ShadowTool/ShadowTool.css"
     colorRegex = /^#[\da-fA-F]{3,6}$/;
     text = {
         languages:["fr", "en"],
@@ -88,7 +89,7 @@ export default class BoxShadowTool extends Tool
 
     #init()
     {
-        this.setCSS("./nwmDevTool/ShadowTool/ShadowTool.css")
+        this.setCSS(this.#href);
         this.generateDisplayFormTool();
 
         const block = document.createElement("div");
@@ -163,7 +164,6 @@ export default class BoxShadowTool extends Tool
     #updateShadow()
     {
         let shadow = "\r\t\t";
-        console.log(this.shadow);
         for (const i in this.shadows) 
         {
             const s = this.shadows[i];
@@ -179,7 +179,6 @@ export default class BoxShadowTool extends Tool
             if(i == this.shadows.length-1)break;
             shadow += ",\r\t\t ";
         }
-        console.log(shadow);
         this.shadowProperty = shadow; 
         this.target.style.boxShadow = shadow;       
     } 

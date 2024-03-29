@@ -22,7 +22,7 @@ body
 .tools-header nav
 {
     position: absolute;
-    z-index: 3;
+    z-index: 25;
     top: 0;
     left: 0;
     height: 100dvh;
