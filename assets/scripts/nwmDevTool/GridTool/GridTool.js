@@ -90,8 +90,6 @@ export default class GridTool extends Tool
         this.#createForm();
 
         this.display.append(this.columnsForm, this.rowsForm, this.grid);
-        
-        this.setHeight();
     }
     /**
      * Créer le formulaire de paramétrage de la grid.

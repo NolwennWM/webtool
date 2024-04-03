@@ -2,6 +2,8 @@
 export default class BurgerMenu extends HTMLElement
 {
     #href = "./assets/scripts/BurgerMenu/BurgerMenu.css";
+    #open = false;
+    #transitionning = false;
     constructor()
     {
         super();
@@ -17,17 +19,18 @@ export default class BurgerMenu extends HTMLElement
 
         const container = document.createElement("div");
         container.classList.add("container");
+        this.container = container;
 
         const button = document.createElement("button");
         button.classList.add("burger");
+        this.button = button;
 
-        let span;
         for(let i = 0; i < 3; i++)
         {
-            span = document.createElement("span");
+            const span = document.createElement("span");
             button.append(span);
         }
-        this.toggleMenuEvent(container, button, span);
+        this.toggleMenuEvent(container, button);
 
         const nav = document.createElement("nav");
         nav.classList.add("navigation");
@@ -42,52 +45,51 @@ export default class BurgerMenu extends HTMLElement
      * @param {HTMLElement} element element HTML to add in the nav
      * @param {Boolean} append append if true otherwise prepend
      */
-    appendNav(element, append = true)
+    appendNav(...elements)
     {
-        if(append) this.nav.append(element);
-        else this.nav.prepend(element);
+        this.nav.append(...elements);
     }
     /**
-     * add events opening or closing navigation
-     * @param {HTMLDivElement} container container to open
-     * @param {HTMLButtonElement} button button open/close
-     * @param {HTMLSpanElement} span element of the button
+     * add event Listeners to the menu
      */
-    toggleMenuEvent(container, button, span)
+    toggleMenuEvent()
     {
-        let open = false, transitioning = false;
-        button.addEventListener("click", ()=>{
-            if(transitioning)return;
-            transitioning = true;
-            if(open) 
-            {
-                button.classList.remove("move");
-                container.classList.remove("open");
-            }
-            else button.classList.add("open");
-            open = !open;
-        });
-        container.addEventListener("click", e=>{
-            if(e.target !== container)return;
-            button.classList.remove("move");
-            container.classList.remove("open");
-            open = false;
-        });
-        // span.addEventListener("transitionend", (e)=>{
-        //     if(e.propertyName !== "rotate" || !open)return;
-            
-        // })
-        button.addEventListener("transitionend", (e)=>{
-            if(e.propertyName === "opacity" && open)
-            {
-                button.classList.add("move");
-                container.classList.add("open");
-                return;
-            }
-            transitioning = false;
-            if(open)return
-            button.classList.remove("open");
-        })
+        this.button.addEventListener("click", this.toggleMenu.bind(this));
+        this.container.addEventListener("click",this.toggleMenu.bind(this));
+        this.button.addEventListener("transitionend", this.transitionMenu.bind(this));
+    }
+    /**
+     * open or close the menu.
+     * @param {MouseEvent} e Event from click
+     */
+    toggleMenu(e)
+    {
+        if(this.transitioning || e.target.classList.contains("navigation") || !this.nav.children.includes(e.target))return;
+        this.transitioning = true;
+        if(this.open) 
+        {
+            this.button.classList.remove("move");
+            this.container.classList.remove("open");
+        }
+        else this.button.classList.add("open");
+        this.open = !this.open;
+    }
+    /**
+     * add or remove class after transitions
+     * @param {TransitionEvent} e transition End event
+     * @returns 
+     */
+    transitionMenu(e)
+    {
+        if(e.propertyName === "opacity" && this.open)
+        {
+            this.button.classList.add("move");
+            this.container.classList.add("open");
+            return;
+        }
+        this.transitioning = false;
+        if(this.open)return
+        this.button.classList.remove("open");
     }
 }
 

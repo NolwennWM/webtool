@@ -99,7 +99,6 @@ export default class BoxShadowTool extends Tool
         this.display.append(block);
 
         this.#createForm();
-        this.setHeight();
     }
     #createForm()
     {

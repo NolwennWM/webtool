@@ -15,21 +15,27 @@
     border: var(--border-size) solid var(--header-bg-color);
     border-radius: 5px;
     max-height: calc(var(--border-size) + var(--header-height) + var(--header-padding) * 2);
+    min-width: 320px;
+    max-width: 320px;
     width: 50%;
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
     overflow: hidden;
-    transition: max-height .3s linear;
+    transition: max-height .3s linear, max-width .3s linear;
     background-color: antiquewhite;
     aspect-ratio: 1/1;
-    resize:both;
+    resize:none;
     position: absolute;
-    /* pointer-events: none; */
+
+    box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.4);
 }
 :host(.open)
 {
-    max-height: 80dvh;
+    min-height: 180px;
+    max-height: 100dvh;
+    max-width: 100dvw;
+    resize:both;
 }
 .tool-header
 {
@@ -37,15 +43,13 @@
     text-align: center;
     cursor: grab;
     height: calc(var(--header-height) + var(--header-padding) * 2);
-    /* max-height: 10cqh; */
     display: grid;
     grid-template-columns: 1fr auto;
     align-items: center;
     padding: 5px;
     padding-top: 0;
     align-content: center;
-    /* pointer-events: all; */
-    /* TODO : les grands titres ne sont pas adapté */
+    
     :host(.moving) &
     {
         cursor: grabbing;
@@ -54,6 +58,9 @@
     {
         font-size: clamp(1em, 7cqw, 2em);
         user-select: none;
+        white-space: nowrap;
+        overflow-x: hidden;
+        text-overflow: ellipsis;
     }
     & .btns-container 
     {

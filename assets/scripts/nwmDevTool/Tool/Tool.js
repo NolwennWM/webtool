@@ -81,6 +81,7 @@ export default class Tool extends HTMLElement
     connectedCallback()
     {
         document.addEventListener("pointerup", this.#events.endMoveTool);
+        this.setPosition();
     }
     /**
      * LifeCycle called if the tool is removed from DOM
@@ -289,12 +290,11 @@ export default class Tool extends HTMLElement
         codeBtn.addEventListener("click", event.bind(this));
         parent.append(codeBtn);
     }
-    setHeight()
+    setPosition()
     {
-        // TODO: garder  ou supprimer cette fonction ?
-        const hHeight = this.header.getBoundingClientRect().height;
-        const cHeight = this.container.getBoundingClientRect().height;
-        
-        this.style.height = Math.ceil(cHeight+hHeight)+"px";
+        this.style.height = "80dvh";
+        this.style.width = "80dvw";
+        this.style.top = "10dvh";
+        this.style.left = "10dvw";
     }
 }
