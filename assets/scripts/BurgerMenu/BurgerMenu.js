@@ -13,9 +13,7 @@ export default class BurgerMenu extends HTMLElement
     {
         this.attachShadow({mode:"open"});
 
-        const style = document.createElement("link");
-        style.rel = "stylesheet";
-        style.href = this.#href;
+        this.generateCSS(this.#href);
 
         const container = document.createElement("div");
         container.classList.add("container");
@@ -37,8 +35,15 @@ export default class BurgerMenu extends HTMLElement
         container.append(nav);
         this.nav = nav;
         
-        this.shadowRoot.append(style,button, container);
+        this.shadowRoot.append(button, container);
 
+    }
+    generateCSS(href)
+    {
+        const style = document.createElement("link");
+        style.rel = "stylesheet";
+        style.href = href;
+        this.shadowRoot.prepend(style);
     }
     /**
      * Append or prepend an HTML to the nav
@@ -64,7 +69,7 @@ export default class BurgerMenu extends HTMLElement
      */
     toggleMenu(e)
     {
-        if(this.transitioning || e.target.classList.contains("navigation") || !this.nav.children.includes(e.target))return;
+        if(this.transitioning || e && (e.target.classList.contains("navigation") || e.target.closest(".navigation")))return;
         this.transitioning = true;
         if(this.open) 
         {

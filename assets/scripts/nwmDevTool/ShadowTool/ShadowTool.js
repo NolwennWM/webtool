@@ -4,17 +4,17 @@ import Tool from "../Tool/Tool.js";
 
 
 
-export default class BoxShadowTool extends Tool
+export default class ShadowTool extends Tool
 {
+    static title = {
+        fr: "Générateur d'Ombre",
+        en: "Shadow Generator"
+    };
     shadows = [];
     #href = "ShadowTool/ShadowTool.css"
     colorRegex = /^#[\da-fA-F]{3,6}$/;
     text = {
         languages:["fr", "en"],
-        title:{
-            fr: "Générateur de Box Shadow",
-            en: "Box Shadow Generator"
-        },
         form:{
             legend: {
                 fr: "Ombre",
@@ -82,7 +82,7 @@ export default class BoxShadowTool extends Tool
         super();
 
         this.chooseLanguage();
-        this.setTitle(this.text.title[this.lang]);
+        this.setTitle(this.constructor.title[this.lang]);
 
         this.#init();
     }
@@ -202,4 +202,4 @@ export default class BoxShadowTool extends Tool
         return {display: displayCode, copy: copyCode}
     }
 }
-customElements.define("nwm-box-shadow", BoxShadowTool);
+customElements.define("nwm-box-shadow", ShadowTool);

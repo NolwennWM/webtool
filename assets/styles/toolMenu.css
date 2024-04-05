@@ -1,0 +1,35 @@
+.navigation-container
+{
+    display: grid;
+    grid-template-rows: 1fr auto auto;
+    height: 100%;
+    menu
+    {
+        height: 100%;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        & li
+        {
+            list-style: none;
+            & button
+            {
+                padding: 5px;
+                cursor: pointer;
+                margin-bottom: 10px;
+                border-radius: 10px;
+                background: linear-gradient(145deg, #fffbe6, #e1d4c2);
+                box-shadow:  7px 2px 20px #d5c8b7,
+                            -7px -2px 20px #fffff7;
+    
+                &:hover
+                {
+                    background: #faebd7;
+                }
+                &:active
+                {
+                    background: linear-gradient(145deg, #e1d4c2, #fffbe6);
+                }
+            }
+        }
+    }
+}

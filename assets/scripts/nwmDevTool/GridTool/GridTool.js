@@ -10,12 +10,12 @@ export default class GridTool extends Tool
     columns = 2;
     rows = 2;
     defaultSize = "1fr";
-    text = {
-        languages: ["fr", "en"],
-        title:{
+    static title ={
             fr: "Générateur de Grid",
             en: "Grid Generator"
-        },
+        };
+    text = {
+        languages: ["fr", "en"],
         form:{
             columns:{
                 fr: "Colonnes",
@@ -64,7 +64,7 @@ export default class GridTool extends Tool
         super();
 
         this.chooseLanguage();
-        this.setTitle(this.text.title[this.lang]);
+        this.setTitle(this.constructor.title[this.lang]);
         
         this.#init();
     }

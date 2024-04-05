@@ -8,6 +8,7 @@ import Overlay from "../OverlayTool/OverlayTool.js";
 export default class Tool extends HTMLElement
 {
     static toolClass = "nwm-tool";
+    static toolStorage = "tools";
     #href = "./assets/scripts/nwmDevTool/"
     lang = "fr";
     #text = {
@@ -82,6 +83,7 @@ export default class Tool extends HTMLElement
     {
         document.addEventListener("pointerup", this.#events.endMoveTool);
         this.setPosition();
+        this.setToLocalStorage();
     }
     /**
      * LifeCycle called if the tool is removed from DOM
@@ -296,5 +298,18 @@ export default class Tool extends HTMLElement
         this.style.width = "80dvw";
         this.style.top = "10dvh";
         this.style.left = "10dvw";
+    }
+    setToLocalStorage()
+    {
+        const key = this.constructor.toolStorage;
+        let tools = localStorage.getItem(key);
+
+        if(!tools) tools = {};
+        else tools = JSON.parse(tools);
+
+        const tool = {name: this.constructor.name, style:this.style.cssText};
+        tools[this.id] = tool;
+        console.log(tool);
+        localStorage.setItem(key, JSON.stringify(tools));
     }
 }
