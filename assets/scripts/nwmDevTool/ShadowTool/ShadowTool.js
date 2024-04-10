@@ -86,7 +86,12 @@ export default class ShadowTool extends Tool
 
         this.#init();
     }
-
+    connectedCallback()
+    {
+        super.connectedCallback();
+        if(!this.history)return;
+        console.log("shadow");
+    }
     #init()
     {
         this.setCSS(this.#href);

@@ -68,6 +68,12 @@ export default class GridTool extends Tool
         
         this.#init();
     }
+    connectedCallback()
+    {
+        super.connectedCallback();
+        if(!this.history)return;
+        console.log("grid TOOL !");
+    }
     /**
      * Génère les éléments principaux du grid generator
      */

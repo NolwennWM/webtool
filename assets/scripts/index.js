@@ -1,7 +1,7 @@
 import ShadowTool from "./nwmDevTool/ShadowTool/ShadowTool.js";
 import GridTool from "./nwmDevTool/GridTool/GridTool.js";
 import BurgerMenu from "./BurgerMenu/BurgerMenu.js";
-
+// TODO: save history of tools, add child selector to grid and shadowText
 const tools = {GridTool, ShadowTool};
 const langs = {fr:"Français", en:"English"};
 const searchLangs = {fr: "Rechercher un Outil", en: "Search a Tool"}
@@ -11,7 +11,8 @@ const nav = document.querySelector(".tools-menu");
 let toolsMenu;
 
 generateMenu();
-getLocalStorage();
+GridTool.getLocalStorageTools(container, tools);
+GridTool.setLocalStorageEvent();
 /**
  * Generate Navigation Menu
  */
@@ -120,24 +121,3 @@ function toggleItemsMenu()
         }
     }
 }
-
-function getLocalStorage()
-{
-    let toolsSave = localStorage.getItem(GridTool.toolStorage);
-    if(!toolsSave)return;
-    toolsSave = JSON.parse(toolsSave);
-    for (const idTool in toolsSave) 
-    {
-        const oldTool = toolsSave[idTool];
-        const tool = tools[oldTool.name];
-        if(tool)
-        {
-            const t = new tool();
-            t.id = idTool;
-            t.style.cssText = oldTool.style;
-            container.append(t);
-        }
-    }
-}
-getLocalStorage();
-// TODO remove tool when delete, set open close, save when close window.

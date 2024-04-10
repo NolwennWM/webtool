@@ -39,8 +39,8 @@ export default class Tool extends HTMLElement
         this.setCSS("Tool/Tool.css");
 
         this.classList.add("open", this.constructor.toolClass)
-        this.addEventListener("pointerdown", this.#activeTool.bind(this));
-        this.#activeTool();
+        this.addEventListener("pointerdown", this.activeTool.bind(this));
+        this.activeTool();
         this.#generateID();
 
         this.container = document.createElement("div");
@@ -82,7 +82,7 @@ export default class Tool extends HTMLElement
     connectedCallback()
     {
         document.addEventListener("pointerup", this.#events.endMoveTool);
-        this.setPosition();
+        if(!this.style.top) this.setPosition();
         this.setToLocalStorage();
     }
     /**
@@ -91,6 +91,7 @@ export default class Tool extends HTMLElement
     disconnectedCallback()
     {
         document.removeEventListener("pointerup", this.#events.endMoveTool);
+        this.deleteFromLocalStorage();
     }
     /**
      * Create a "link" tag and insert it in the shadowDOM
@@ -180,7 +181,7 @@ export default class Tool extends HTMLElement
     /**
      * put the last clicked tool over the others
      */
-    #activeTool()
+    activeTool()
     {
         if(window.activeNWMTool === this) return;
         if(window.activeNWMTool)
@@ -301,15 +302,72 @@ export default class Tool extends HTMLElement
     }
     setToLocalStorage()
     {
+        const tools = this.getLocalStorage();
+
+        const tool = {
+            name: this.constructor.name, 
+            style: this.style.cssText, 
+            open: this.classList.contains("open"),
+            actif: this.style.zIndex !== ""
+        };
+        tools[this.id] = tool;
+
+        this.saveLocalStorage(tools);
+    }
+    deleteFromLocalStorage()
+    {
+        const tools = this.getLocalStorage();
+        if(!tools[this.id])return;
+
+        delete tools[this.id];
+        this.saveLocalStorage(tools);
+    }
+    getLocalStorage()
+    {
         const key = this.constructor.toolStorage;
         let tools = localStorage.getItem(key);
 
         if(!tools) tools = {};
         else tools = JSON.parse(tools);
-
-        const tool = {name: this.constructor.name, style:this.style.cssText};
-        tools[this.id] = tool;
-        console.log(tool);
-        localStorage.setItem(key, JSON.stringify(tools));
+        return tools;
+    }
+    saveLocalStorage(data)
+    {
+        const key = this.constructor.toolStorage;
+        localStorage.setItem(key, JSON.stringify(data));
+    }
+    static setLocalStorageEvent()
+    {
+        window.addEventListener("beforeunload", ()=>{
+            const tools = document.querySelectorAll("."+this.toolClass);
+            for (const tool of tools) 
+            {
+                tool.setToLocalStorage();    
+            }
+        });
+    }
+    static getLocalStorageTools(parent, tools)
+    {
+        let toolsSave = localStorage.getItem(this.toolStorage);
+        if(!toolsSave)return;
+        toolsSave = JSON.parse(toolsSave);
+        let actifTool;
+        for (const idTool in toolsSave) 
+        {
+            if(document.querySelector("#"+idTool))continue;
+            const oldTool = toolsSave[idTool];
+            const tool = tools[oldTool.name];
+            if(tool)
+            {
+                const t = new tool();
+                t.id = idTool;
+                t.style.cssText = oldTool.style;
+                t.classList.toggle("open", oldTool.open)
+                t.history = oldTool.history??undefined;
+                parent.append(t);
+                if(oldTool.actif) actifTool = t;
+            }
+        }
+        actifTool.activeTool();
     }
 }
