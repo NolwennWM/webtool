@@ -67,6 +67,7 @@ export default class Overlay extends HTMLElement
         const changeCode = document.createElement("button");
         changeCode.classList.add("changeCode");
         changeCode.textContent = this.#text.display.html[this.lang];
+        if(!this.HTML) changeCode.style.display = "none";
 
         const pre = document.createElement("pre");
 
