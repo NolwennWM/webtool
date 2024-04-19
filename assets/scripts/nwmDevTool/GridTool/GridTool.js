@@ -10,6 +10,7 @@ export default class GridTool extends Tool
     columns = 2;
     rows = 2;
     defaultSize = "1fr";
+    nbChildrenColors = 5;
     static title ={
             fr: "Générateur de Grid",
             en: "Grid Generator"
@@ -44,7 +45,7 @@ export default class GridTool extends Tool
                 en: "Select rows, columns or both only."
             }
         }
-    }
+    };
     formInfo = [
         {type:"number",name:"columns",min:0, max:20, value:this.columns, event:this.#setGrid.bind(this)},
         {type:"number",name:"rows",min:0, max:20, value:this.rows, event:this.#setGrid.bind(this)},
@@ -58,6 +59,8 @@ export default class GridTool extends Tool
     columnsSizes = [];
     rowsSizes = [];
     css = {};
+    childrenList = [];
+    parentId = "";
     
     constructor()
     {
@@ -92,10 +95,13 @@ export default class GridTool extends Tool
         this.grid = document.createElement("div");
         this.grid.classList.add("grid");
         this.grid.style.display = "grid";
+        this.grid.draggable = false;
+
+        this.gridChildren = this.grid.cloneNode();
 
         this.#createForm();
 
-        this.display.append(this.columnsForm, this.rowsForm, this.grid);
+        this.display.append(this.columnsForm, this.rowsForm, this.gridChildren, this.grid);
     }
     /**
      * Créer le formulaire de paramétrage de la grid.
@@ -119,6 +125,7 @@ export default class GridTool extends Tool
      */
     #setGrid(e)
     {
+        /** @type {string}*/
         let current = e.target.name;
 
         const nb = parseInt(e.target.value);
@@ -132,6 +139,7 @@ export default class GridTool extends Tool
             case "rowGap":
             case "columnGap":
                 this.grid.style[current] = nb + "px";
+                this.gridChildren.style[current] = nb + "px";
                 this.css[current] = nb;
                 return;
             default:
@@ -233,6 +241,7 @@ export default class GridTool extends Tool
             prev = line;
         }
         this.grid.style[property] = template;
+        this.gridChildren.style[property] = template;
         this[form].style[property] = template;
         this.css[target] = template;
     }
@@ -248,9 +257,14 @@ export default class GridTool extends Tool
             for (let i = 0; i < diff; i++) 
             {
                 const div = document.createElement("div");
-                div.classList.add("box"+this.totalBox);
+                div.classList.add("box","box"+this.totalBox);
+                div.dataset.id = this.totalBox+1;
+                div.draggable = false;
                 this.grid.append(div);
                 this.totalBox++
+
+                div.addEventListener("mousedown", (e)=>this.#GenerateChild(e, div));
+                div.addEventListener("mouseup", (e)=>this.#GenerateChild(e, div));
             }
         }
         else
@@ -275,7 +289,24 @@ export default class GridTool extends Tool
      */
     #getHTML()
     {
-        console.log("Afficher HTML");
+        let displayCode = '&lt;<span class="tag">div</span> <span class="attribute">class</span>=<span class="string">"parent"</span>&gt;';
+        let copyCode = '<div class="parent">';
+
+        if(this.childrenList.length)
+        {
+            displayCode += "\r";
+            copyCode += "\r";
+        }
+        for (let i = 0; i< this.childrenList.length; i++) 
+        {
+            displayCode += `\t&lt;<span class='tag'>div</span> <span class="attribute">class</span>=<span class="string">"div${i+1}"</span>&gt;&lt;/<span class="tag">div</span>&gt;\r`
+            copyCode += `\t<div class="div${i+1}"></div>\r`;
+        }
+
+        displayCode += '&lt;/<span class="tag">div</span>&gt;';
+        copyCode += '</div>';
+
+        return {display: displayCode, copy: copyCode}
     }
     /**
      * Affiche un exemple de code CSS correspondant à la grid
@@ -304,17 +335,88 @@ export default class GridTool extends Tool
         {
             displayCode += `\t<span class='property'>row-gap</span>: <span class='value'>${this.css.rowGap}px</span>;\r`;
             copyCode += `\trow-gap: ${this.css.rowGap}px;\r`;
-        } 
-
+        }
         copyCode += "}";
         displayCode += "}";
+        for (let i = 0; i< this.childrenList.length; i++) 
+        {
+            const child = this.childrenList[i];
+            displayCode += `\r<span class='selector'>.div${i+1}</span> { <span class='property'>grid-area</span>: <span class='value'>${child}</span>; }`
+            copyCode += `\r.div${i+1} { grid-area: ${child}; }`
+        }
+
         return {display: displayCode, copy: copyCode}
     }
     #getCode()
     {
         const overlay = this.generateOverlay();
         overlay.setCSS = this.#getCSS();
+        overlay.setHTML = this.#getHTML();
         overlay.displayCSS();
     }
+    /**
+     * 
+     * @param {MouseEvent} event 
+     * @param {HTMLElement} target 
+     */
+    #GenerateChild(event, target)
+    {
+        event.preventDefault();
+        const   
+            x = [], 
+            y =[],
+            oldId = this.parentId,
+            newId = target.dataset.id;
+        if(!newId)return;
+        if(event.type === "mouseup" && oldId)
+        {
+            x.push(
+                (oldId % this.columns)||this.columns, 
+                (newId % this.columns)||this.columns
+            );
+            y.push(
+                Math.ceil(oldId / this.columns),
+                Math.ceil(newId / this.columns)
+            );
+            
+            const 
+                div = document.createElement("div"),
+                span = document.createElement("span"),
+                closeBtn = document.createElement("button"),
+                area = `${Math.min(...y)} / ${Math.min(...x)} / ${Math.max(...y)+1} / ${Math.max(...x)+1}`;
+
+            this.childrenList.push(area);
+            const length = this.childrenList.length
+
+            div.style.gridArea = area;
+            div.classList.add("grid-child", "child"+(length%this.nbChildrenColors));
+
+            span.textContent = ".div"+ length;
+
+            closeBtn.innerHTML = "&#10060;";
+            closeBtn.dataset.id = length-1;
+            closeBtn.addEventListener("click", this.#deleteChild.bind(this));
+
+            div.append(span, closeBtn);
+            this.gridChildren.append(div);
+
+            this.parentId = "";
+        }
+        else if (event.type === "mousedown")
+        {
+            this.parentId = newId;
+        }
+    }
+    /**
+     * 
+     * @param {MouseEvent} event 
+     */
+    #deleteChild(event)
+    {
+        if(!(event.target instanceof HTMLButtonElement)||!event.target.dataset.id)return;
+        this.childrenList.splice(event.target.dataset.id, 1);
+        event.target.parentElement.remove();
+    }
 }
+// TODO: Sauvegarde interne à l'outil.
 customElements.define("nwm-grid", GridTool);
