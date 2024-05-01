@@ -305,7 +305,7 @@ export default class GridTool extends Tool
 
         displayCode += '&lt;/<span class="tag">div</span>&gt;';
         copyCode += '</div>';
-
+        
         return {display: displayCode, copy: copyCode}
     }
     /**
@@ -352,7 +352,7 @@ export default class GridTool extends Tool
         const overlay = this.generateOverlay();
         overlay.setCSS = this.#getCSS();
         overlay.setHTML = this.#getHTML();
-        overlay.displayCSS();
+        overlay.displayCode();
     }
     /**
      * 

@@ -139,13 +139,10 @@ export default class Tool extends WindowNWM
     }
     static setLocalStorageEvent()
     {
-        console.log("setEvent");
         window.addEventListener("beforeunload", ()=>{
             const tools = document.querySelectorAll("."+this.windowClass);
-            console.log(tools);
             for (const tool of tools) 
             {
-                console.log("test");
                 tool.setToLocalStorage();    
             }
         });
@@ -172,6 +169,6 @@ export default class Tool extends WindowNWM
                 if(oldTool.actif) actifTool = t;
             }
         }
-        actifTool.activeWindow();
+        actifTool?.activeWindow();
     }
 }
