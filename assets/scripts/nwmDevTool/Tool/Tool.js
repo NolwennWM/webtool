@@ -1,16 +1,14 @@
 "use strict";
-
+import WindowNWM from "../WindowNWM/WindowNWM.js";
 import Overlay from "../OverlayTool/OverlayTool.js";
 
 /**
  * Abstract Class for HTML Dev Tools.
  */
-export default class Tool extends HTMLElement
+export default class Tool extends WindowNWM
 {
-    static toolClass = "nwm-tool";
+    static windowClass = "nwm-tool";
     static toolStorage = "tools";
-    #href = "./assets/scripts/nwmDevTool/"
-    lang = "fr";
     #text = {
         form: {
             codeButton:{
@@ -19,70 +17,18 @@ export default class Tool extends HTMLElement
             }
         }
     }
-    #title;
-    #events= {};
     
     constructor()
     {
         super();
-        this.#events.movingTool = this.#movingTool.bind(this);
-        this.#events.endMoveTool = this.#endMoveTool.bind(this);
-        this.#init();
-    }
-    /**
-     * Initialise the tool.
-     */
-    #init()
-    {
-        this.attachShadow({mode:"open"});
-
-        this.setCSS("Tool/Tool.css");
-
-        this.classList.add("open", this.constructor.toolClass)
-        this.addEventListener("pointerdown", this.activeTool.bind(this));
-        this.activeTool();
-        this.#generateID();
-
-        this.container = document.createElement("div");
-        this.container.classList.add("tool-container")
-
-        const header = document.createElement("div");
-        header.classList.add("tool-header");
-        header.addEventListener("pointerdown", this.#startMoveTool.bind(this));
-
-        this.header = header;
-        const btnsHeader = document.createElement("div")
-        btnsHeader.classList.add("btns-container")
-
-        const close = document.createElement("button");
-        close.classList.add("close", "btn");
-        close.innerHTML = "&#10060;";
-        close.addEventListener("pointerup", this.#closeTool.bind(this));
-        
-        const toggle = document.createElement("button");
-        toggle.classList.add("toggle", "btn");
-        toggle.innerHTML = "&#x23AF;";
-        toggle.addEventListener("pointerup", this.#toggleTool.bind(this));
-
-        const fs = document.createElement("button");
-        fs.classList.add("fullscreen", "btn");
-        fs.innerHTML = "&#x26F6;";
-        fs.addEventListener("pointerup", this.#toggleFullscreen.bind(this));
-
-        this.#title = document.createElement("h2");
-        btnsHeader.append(toggle,fs, close)
-        header.append(this.#title, btnsHeader);
-
-        this.shadowRoot.append(header, this.container);
-        
+        this.setCSS("Tool/Tool.css")
     }
     /**
      * LifeCycle called if the tool is added to DOM
      */
     connectedCallback()
     {
-        document.addEventListener("pointerup", this.#events.endMoveTool);
-        if(!this.style.top) this.setPosition();
+        super.connectedCallback();
         this.setToLocalStorage();
     }
     /**
@@ -90,146 +36,8 @@ export default class Tool extends HTMLElement
      */
     disconnectedCallback()
     {
-        document.removeEventListener("pointerup", this.#events.endMoveTool);
+        super.disconnectedCallback();
         this.deleteFromLocalStorage();
-    }
-    /**
-     * Create a "link" tag and insert it in the shadowDOM
-     * @param {string} href href for a css file.
-     */
-    setCSS(href)
-    {
-        const style = document.createElement("link");
-        style.rel = "stylesheet";
-        style.href = this.#href+href;
-        if(!this.lastStyle)
-        {
-            this.shadowRoot.prepend(style);
-            this.lastStyle = style;
-            return;
-        }
-        this.lastStyle.after(style);
-    }
-    /**
-     * set the title of the tool.
-     * @param {string} title title of the tool
-     */
-    setTitle(title)
-    {
-        this.#title.textContent = title;
-    }
-    /**
-     * expand or close the tool.
-     * @param {PointerEvent|MouseEvent} e Pointer or mouse Event
-     */
-    #toggleTool(e)
-    {
-        if(e.target.classList.contains(".close")) return;
-        this.classList.toggle("open");
-    }
-    /**
-     * remove the tool from HTML
-     */
-    #closeTool()
-    {
-        this.remove();
-    }
-    /**
-     * Toggle the fullscreen of the tool
-     */
-    #toggleFullscreen()
-    {
-        if(!document.fullscreenElement)
-        {
-            this.requestFullscreen()
-            return;
-        }
-        document.exitFullscreen();
-    }
-    /**
-     * set the language of the tool.
-     */
-    chooseLanguage()
-    {
-        // TODO: save lang in localstorage, and launch the 
-        const params = new URLSearchParams(document.location.search);
-        const lang = params.get("lang");
-        if(!lang || !this.text || !this.text.languages.includes(lang))
-        {
-            this.lang = "en";
-            return;
-        }
-        this.lang = lang;
-    }
-    /**
-     * Generate uniq id for the tool.
-     * @param {number} length size of the id
-     */
-    #generateID(length = 6)
-    {
-        let id = "id-";
-        id += Math.random().toString(36).substring(2, length+2);
-        
-        const exist = document.querySelector("#"+id);
-        if(exist)
-        {
-            this.#generateID(length);
-            return;
-        }
-        this.id = id;
-    }
-    /**
-     * put the last clicked tool over the others
-     */
-    activeTool()
-    {
-        if(window.activeNWMTool === this) return;
-        if(window.activeNWMTool)
-        {
-            window.activeNWMTool.style.zIndex = "";
-        }
-        this.style.zIndex = 10;
-        window.activeNWMTool = this;
-
-    }
-    /**
-     * Start the movement of the tool
-     * @param {PointerEvent} e pointerdown event
-     */
-    #startMoveTool(e)
-    {
-        if(e.target !== this.header && e.target !== this.#title)return;
-        const {x, y} = this.getBoundingClientRect();
-        this.startPosition = {toolX : x- e.clientX, toolY: y - e.clientY};
-        this.classList.add("moving");
-        document.addEventListener("pointermove", this.#events.movingTool);
-    }
-    /**
-     * Set end to the movement of the tool and check if the last position is valid
-     */
-    #endMoveTool()
-    {
-        this.classList.remove("moving");
-        document.removeEventListener("pointermove", this.#events.movingTool);
-
-        const {x, y,width} = this.getBoundingClientRect();
-        const headerHeight = this.header.getBoundingClientRect().height;
-
-        if(y<0) this.style.top = "0";
-        if(y>window.innerHeight) this.style.top = window.innerHeight - headerHeight+"px";
-        if(x+width<150)this.style.left = 150-width+"px";
-        if(x>window.innerWidth-150)this.style.left = window.innerWidth-150 + "px";
-    }
-    /**
-     * Move the tool
-     * @param {PointerEvent} e pointermove event
-     */
-    #movingTool(e)
-    {
-        const {clientX,clientY} = e;
-        
-        this.style.top = this.startPosition.toolY+ clientY+"px";
-        this.style.left = this.startPosition.toolX+ clientX+"px";
     }
     /**
      * generate an overlay for display code, can be closed.
@@ -293,13 +101,6 @@ export default class Tool extends HTMLElement
         codeBtn.addEventListener("click", event.bind(this));
         parent.append(codeBtn);
     }
-    setPosition()
-    {
-        this.style.height = "80dvh";
-        this.style.width = "80dvw";
-        this.style.top = "10dvh";
-        this.style.left = "10dvw";
-    }
     setToLocalStorage()
     {
         const tools = this.getLocalStorage();
@@ -338,10 +139,13 @@ export default class Tool extends HTMLElement
     }
     static setLocalStorageEvent()
     {
+        console.log("setEvent");
         window.addEventListener("beforeunload", ()=>{
-            const tools = document.querySelectorAll("."+this.toolClass);
+            const tools = document.querySelectorAll("."+this.windowClass);
+            console.log(tools);
             for (const tool of tools) 
             {
+                console.log("test");
                 tool.setToLocalStorage();    
             }
         });
@@ -368,6 +172,6 @@ export default class Tool extends HTMLElement
                 if(oldTool.actif) actifTool = t;
             }
         }
-        actifTool.activeTool();
+        actifTool.activeWindow();
     }
 }
