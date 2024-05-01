@@ -44,6 +44,31 @@
     max-height: 100%;
     overflow: auto;
     scrollbar-width: thin;
+    & .box
+    {
+        position: relative;
+    }
+    & .grid-child 
+    {
+        position: relative;
+        & button
+        {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            z-index: 5;
+        }
+        &.child0{ background-color: rgba(144, 238, 144, 0.7); }
+        &.child1{ background-color: rgba(173, 216, 230, 0.7); }
+        &.child2{ background-color: rgba(240, 128, 128, 0.7); }
+        &.child3{ background-color: rgba(250, 250, 210, 0.7); }
+        &.child4{ background-color: rgba(119, 136, 153, 0.7); }
+    }
+    
+    
 }
 .grid [class*="box"]
 {

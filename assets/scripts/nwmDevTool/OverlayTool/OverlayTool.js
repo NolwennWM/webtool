@@ -24,10 +24,16 @@ export default class Overlay extends HTMLElement
                 en: "Code Copied"
             },
             html:{
-
+                fr: "Afficher HTML",
+                en: "Show HTML"
+            },
+            css:{
+                fr: "Afficher CSS",
+                en: "Show CSS"
             }
         }
-    }
+    };
+    showHTML = false;
     constructor(lang)
     {
         super();
@@ -58,11 +64,16 @@ export default class Overlay extends HTMLElement
         copy.classList.add("copy");
         copy.textContent = this.#text.display.copy[this.lang];
 
+        const changeCode = document.createElement("button");
+        changeCode.classList.add("changeCode");
+        changeCode.textContent = this.#text.display.html[this.lang];
+        if(!this.HTML) changeCode.style.display = "none";
+
         const pre = document.createElement("pre");
 
         this.code = document.createElement("code");
         
-        pre.append(copy, this.code);
+        pre.append(copy, this.code, changeCode);
         displayBlock.append(h3, pre, close);
         this.shadowRoot.append(displayBlock);
         document.body.append(this);
@@ -77,6 +88,19 @@ export default class Overlay extends HTMLElement
                 copy.textContent = this.#text.display.copy[this.lang];
                 
             }, 2000);
+        });
+        changeCode.addEventListener("click", ()=>{
+            if(this.showHTML)
+            {
+                changeCode.textContent = this.#text.display.html[this.lang];
+                this.displayCSS();
+            }
+            else
+            {
+                changeCode.textContent = this.#text.display.css[this.lang];
+                this.displayHTML();
+            }
+            this.showHTML = !this.showHTML;
         });
         close.addEventListener("click", ()=>this.remove());
     }
