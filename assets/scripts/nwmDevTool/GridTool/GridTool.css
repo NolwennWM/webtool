@@ -81,4 +81,8 @@
     {
         max-height: 90cqh;
     }
+    .form-container
+    {
+        flex-direction: column;
+    }
 }

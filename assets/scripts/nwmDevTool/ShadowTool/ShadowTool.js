@@ -206,5 +206,9 @@ export default class ShadowTool extends Tool
         let copyCode = `.target\r{\r\tbox-shadow: ${this.shadowProperty};\r}`;
         return {display: displayCode, copy: copyCode}
     }
+    getToolSettings()
+    {
+        return true;
+    }
 }
 customElements.define("nwm-box-shadow", ShadowTool);

@@ -7,8 +7,13 @@ import Overlay from "../OverlayTool/OverlayTool.js";
  */
 export default class Tool extends WindowNWM
 {
+    /** class of tool's window */
     static windowClass = "nwm-tool";
+    /** name of the localstorage */
     static toolStorage = "tools";
+    /** setting of the tool */
+    settings = false;
+    /** text translation of the tools */
     #text = {
         form: {
             codeButton:{
@@ -17,11 +22,15 @@ export default class Tool extends WindowNWM
             }
         }
     }
-    
+    /** @type {HTMLElement} HTML Element containing the display of the tool */
+    display;
+    /** @type {HTMLElement} HTML Element containing the form of the tool */
+    form;
+
     constructor()
     {
         super();
-        this.setCSS("Tool/Tool.css")
+        this.setCSS("Tool/Tool.css");
     }
     /**
      * LifeCycle called if the tool is added to DOM
@@ -101,6 +110,9 @@ export default class Tool extends WindowNWM
         codeBtn.addEventListener("click", event.bind(this));
         parent.append(codeBtn);
     }
+    /**
+     * set object to stock in local storage
+     */
     setToLocalStorage()
     {
         const tools = this.getLocalStorage();
@@ -109,12 +121,16 @@ export default class Tool extends WindowNWM
             name: this.constructor.name, 
             style: this.style.cssText, 
             open: this.classList.contains("open"),
-            actif: this.style.zIndex !== ""
+            actif: this.style.zIndex !== "",
+            settings: this.getToolSettings()
         };
         tools[this.id] = tool;
 
         this.saveLocalStorage(tools);
     }
+    /**
+     * Delete tool from local storage
+     */
     deleteFromLocalStorage()
     {
         const tools = this.getLocalStorage();
@@ -123,6 +139,10 @@ export default class Tool extends WindowNWM
         delete tools[this.id];
         this.saveLocalStorage(tools);
     }
+    /**
+     * get all tools saved
+     * @returns {object} list of tools
+     */
     getLocalStorage()
     {
         const key = this.constructor.toolStorage;
@@ -132,11 +152,18 @@ export default class Tool extends WindowNWM
         else tools = JSON.parse(tools);
         return tools;
     }
+    /**
+     * Save in localstorage the list of tools
+     * @param {object} data object to save
+     */
     saveLocalStorage(data)
     {
         const key = this.constructor.toolStorage;
         localStorage.setItem(key, JSON.stringify(data));
     }
+    /**
+     * Add event before unload of the page for save opened tools
+     */
     static setLocalStorageEvent()
     {
         window.addEventListener("beforeunload", ()=>{
@@ -147,6 +174,11 @@ export default class Tool extends WindowNWM
             }
         });
     }
+    /**
+     * Generate tools saved in local storage.
+     * @param {HTMLElement} parent HTML Element where tools will be appened
+     * @param {Object} tools list of classes of tools
+     */
     static getLocalStorageTools(parent, tools)
     {
         let toolsSave = localStorage.getItem(this.toolStorage);
@@ -170,5 +202,14 @@ export default class Tool extends WindowNWM
             }
         }
         actifTool?.activeWindow();
+    }
+    /**
+     * should return settings of the tool
+     * Have to be overided.
+     * @returns {any} tool settings
+     */
+    getToolSettings()
+    {
+        return this.settings;
     }
 }

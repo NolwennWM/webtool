@@ -5,16 +5,22 @@ import Tool from "../Tool/Tool.js";
  */
 export default class GridTool extends Tool
 {
+    /** url for the CSS file */
     #href = "GridTool/GridTool.css";
-    // default value :
+    /** default numbers of columns */
     columns = 2;
+    /** default numbers of rows */
     rows = 2;
+    /** default size of the rows and columns */
     defaultSize = "1fr";
+    /** numbers of colors set in the css for children */
     nbChildrenColors = 5;
+    /** title translation of the tool */
     static title ={
             fr: "Générateur de Grid",
             en: "Grid Generator"
         };
+    /** text translation of the tool */
     text = {
         languages: ["fr", "en"],
         form:{
@@ -46,21 +52,37 @@ export default class GridTool extends Tool
             }
         }
     };
+    /** list of inputs in the form */
     formInfo = [
         {type:"number",name:"columns",min:0, max:20, value:this.columns, event:this.#setGrid.bind(this)},
         {type:"number",name:"rows",min:0, max:20, value:this.rows, event:this.#setGrid.bind(this)},
         {type:"number",name:"columnGap",min:0, max:50, value:0, event:this.#setGrid.bind(this)},
         {type:"number",name:"rowGap",min:0, max:50, value:0, event:this.#setGrid.bind(this)},
     ];
-    // fonctionnal properties :
+    /** id of the last column */
     columnsId = 0;
+    /** Id of the last row */
     rowsId = 0;
+    /** Total of box in the grid */
     totalBox = 0;
+    /** list of sizes of the columns */
     columnsSizes = [];
+    /** list of sizes of the rows */
     rowsSizes = [];
+    /** CSS of the main grid */
     css = {};
+    /** list of children div template area */
     childrenList = [];
+    /** data-id of the starting point for children */
     parentId = "";
+    /** @type {HTMLElement} grid displayed */
+    grid;
+    /** @type {HTMLElement} grid displaying children */
+    gridChildren;
+    /** @type {HTMLElement} HTML Element where are the inputs for the rows */
+    rowsForm;
+    /** @type {HTMLElement} HTML Element where are the inputs for the columns */
+    columnsForm;
     
     constructor()
     {
@@ -130,7 +152,7 @@ export default class GridTool extends Tool
 
         const nb = parseInt(e.target.value);
         if(nb<0) return;
-
+        
         switch(current)
         {
             case "columns":
@@ -154,9 +176,9 @@ export default class GridTool extends Tool
         this.#setSizes(current);
     }
     /**
-     * Ajoute ou surprime des éléments du tableau de taille donné en argument.
-     * @param {number} diff number of grid or row to add or remove
-     * @param {string} target 
+     * Ajoute ou surprime des éléments du tableau selon la taille donnée en argument.
+     * @param {number} diff number of column or row to add or remove
+     * @param {string} target column or row
      */
     #setTemplate(diff, target)
     {
@@ -276,6 +298,10 @@ export default class GridTool extends Tool
             }
         }
     }
+    /**
+     * set size of a row or column.
+     * @param {Event} e Event comming from input
+     */
     #inputToSize(e)
     {
         const   id = e.target.dataset.id,
@@ -347,6 +373,9 @@ export default class GridTool extends Tool
 
         return {display: displayCode, copy: copyCode}
     }
+    /**
+     * open the overlay for show code
+     */
     #getCode()
     {
         const overlay = this.generateOverlay();
@@ -355,9 +384,9 @@ export default class GridTool extends Tool
         overlay.displayCode();
     }
     /**
-     * 
-     * @param {MouseEvent} event 
-     * @param {HTMLElement} target 
+     * generate child div in the grid
+     * @param {MouseEvent} event mousedown or mouseup event
+     * @param {HTMLElement} target target of the event
      */
     #GenerateChild(event, target)
     {
@@ -408,8 +437,8 @@ export default class GridTool extends Tool
         }
     }
     /**
-     * 
-     * @param {MouseEvent} event 
+     * Remove a child div from the grid
+     * @param {MouseEvent} event click
      */
     #deleteChild(event)
     {

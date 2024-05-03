@@ -2,11 +2,23 @@
 
 export default class WindowNWM extends HTMLElement
 {
+    /** class of the window HTML Element */
     static windowClass = "nwm-window"
+    /** path for the folder of this class */
     #href = "./assets/scripts/nwmDevTool/";
+    /** default language of the window */
     lang = "fr";
+    /** @type {HTMLElement} HTML Element containing the title of the window */
     #title;
+    /** list of functions binded for event listeners */
     #events= {};
+    /** start position of the window during a movement */
+    startPosition = {windowX: 0, windowY: 0};
+    /** @type {HTMLElement|undefined} last HTML Link Element inserted */
+    lastStyle;
+    /** @type {HTMLElement} HTML Element containing the header of the window */
+    header;
+
     constructor()
     {
         super();
