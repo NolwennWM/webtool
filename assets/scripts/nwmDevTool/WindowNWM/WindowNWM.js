@@ -1,5 +1,7 @@
 "use strict";
-
+// interessant mais pas géré par firefox TODO : quand géré mettre text en voir config en json
+// import * as text from "./test.json" with {type: "json"}; 
+// console.log(text);
 export default class WindowNWM extends HTMLElement
 {
     /** class of the window HTML Element */
@@ -18,6 +20,8 @@ export default class WindowNWM extends HTMLElement
     lastStyle;
     /** @type {HTMLElement} HTML Element containing the header of the window */
     header;
+    /** @type {HTMLElement} HTML Element containing the explanation of the window */
+    info;
 
     constructor()
     {
@@ -53,6 +57,7 @@ export default class WindowNWM extends HTMLElement
 
         const infoDisplay = document.createElement("div");
         infoDisplay.classList.add("information", "hide");
+        this.info = infoDisplay;
 
         const closeBTN = document.createElement("button");
         closeBTN.classList.add("close", "btn");
@@ -72,9 +77,7 @@ export default class WindowNWM extends HTMLElement
         const infoBTN = document.createElement("button");
         infoBTN.classList.add("info", "btn");
         infoBTN.innerHTML = "&#x2754;";
-        infoBTN.addEventListener("pointerup", this.#showInfo.bind(this));
-        infoBTN.addEventListener("mouseenter", this.#showInfo.bind(this));
-        infoBTN.addEventListener("mouseleave", this.#hideInfo.bind(this));
+        infoBTN.addEventListener("pointerup", this.#toggleInfo.bind(this));
 
         this.#title = document.createElement("h2");
 
@@ -100,13 +103,9 @@ export default class WindowNWM extends HTMLElement
     {
         document.removeEventListener("pointerup", this.#events.endMoveWindow);
     }
-    #showInfo()
+    #toggleInfo()
     {
-
-    }
-    #hideInfo()
-    {
-
+        this.info.classList.toggle("hide");
     }
     /**
      * Create a "link" tag and insert it in the shadowDOM
