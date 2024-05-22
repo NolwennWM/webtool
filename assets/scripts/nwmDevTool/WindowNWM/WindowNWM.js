@@ -46,29 +46,41 @@ export default class WindowNWM extends HTMLElement
         const header = document.createElement("div");
         header.classList.add("window-header");
         header.addEventListener("pointerdown", this.#startMoveWindow.bind(this));
-
         this.header = header;
+
         const btnsHeader = document.createElement("div")
         btnsHeader.classList.add("btns-container")
 
-        const close = document.createElement("button");
-        close.classList.add("close", "btn");
-        close.innerHTML = "&#10060;";
-        close.addEventListener("pointerup", this.#closeWindow.bind(this));
-        
-        const toggle = document.createElement("button");
-        toggle.classList.add("toggle", "btn");
-        toggle.innerHTML = "&#x23AF;";
-        toggle.addEventListener("pointerup", this.#toggleWindow.bind(this));
+        const infoDisplay = document.createElement("div");
+        infoDisplay.classList.add("information", "hide");
 
-        const fs = document.createElement("button");
-        fs.classList.add("fullscreen", "btn");
-        fs.innerHTML = "&#x26F6;";
-        fs.addEventListener("pointerup", this.#toggleFullscreen.bind(this));
+        const closeBTN = document.createElement("button");
+        closeBTN.classList.add("close", "btn");
+        closeBTN.innerHTML = "&#10060;";
+        closeBTN.addEventListener("pointerup", this.#closeWindow.bind(this));
+        
+        const toggleBTN = document.createElement("button");
+        toggleBTN.classList.add("toggle", "btn");
+        toggleBTN.innerHTML = "&#x23AF;";
+        toggleBTN.addEventListener("pointerup", this.#toggleWindow.bind(this));
+
+        const fsBTN = document.createElement("button");
+        fsBTN.classList.add("fullscreen", "btn");
+        fsBTN.innerHTML = "&#x26F6;";
+        fsBTN.addEventListener("pointerup", this.#toggleFullscreen.bind(this));
+
+        const infoBTN = document.createElement("button");
+        infoBTN.classList.add("info", "btn");
+        infoBTN.innerHTML = "&#x2754;";
+        infoBTN.addEventListener("pointerup", this.#showInfo.bind(this));
+        infoBTN.addEventListener("mouseenter", this.#showInfo.bind(this));
+        infoBTN.addEventListener("mouseleave", this.#hideInfo.bind(this));
 
         this.#title = document.createElement("h2");
-        btnsHeader.append(toggle,fs, close)
+
+        btnsHeader.append(infoBTN, toggleBTN, fsBTN, closeBTN)
         header.append(this.#title, btnsHeader);
+        this.container.append(infoDisplay);
 
         this.shadowRoot.append(header, this.container);
         
@@ -87,6 +99,14 @@ export default class WindowNWM extends HTMLElement
     disconnectedCallback()
     {
         document.removeEventListener("pointerup", this.#events.endMoveWindow);
+    }
+    #showInfo()
+    {
+
+    }
+    #hideInfo()
+    {
+
     }
     /**
      * Create a "link" tag and insert it in the shadowDOM
