@@ -1,5 +1,6 @@
 "use strict";
 import Tool from "../Tool/Tool.js";
+import { GridToolText } from "./GridToolText.js";
 /**
  * Balise HTML créant un GRID generator
  */
@@ -21,37 +22,7 @@ export default class GridTool extends Tool
             en: "Grid Generator"
         };
     /** text translation of the tool */
-    text = {
-        languages: ["fr", "en"],
-        form:{
-            columns:{
-                fr: "Colonnes",
-                en: "Columns"
-            },
-            rows:{
-                fr: "Rangées",
-                en: "Rows"
-            },
-            columnGap:{
-                fr: "Écart des Colonnes (en px)",
-                en: "Columns Gap (in px)"
-            },
-            rowGap:{
-                fr: "Écart des Rangées (en px)",
-                en: "Rows Gap (in px)"
-            }
-        },
-        errors:{
-            input:{
-                fr: "name de l'input inconnu",
-                en: "Input's name unknown"
-            },
-            sizes:{
-                fr: "Selectionnez seulement rows, columns ou both",
-                en: "Select rows, columns or both only."
-            }
-        }
-    };
+    text = GridToolText;
     /** list of inputs in the form */
     formInfo = [
         {type:"number",name:"columns",min:0, max:20, value:this.columns, event:this.#setGrid.bind(this)},
@@ -131,7 +102,7 @@ export default class GridTool extends Tool
     #createForm()
     {
         const formInfo = this.formInfo;
-        this.generateForm(formInfo, this.text.form);
+        this.generateForm(formInfo);
 
         this.generateCodeButton(this.form, this.#getCode);
         
@@ -165,7 +136,7 @@ export default class GridTool extends Tool
                 this.css[current] = nb;
                 return;
             default:
-                console.error(this.text.errors.input[this.lang]);
+                console.error(this.getText("error.input"));
                 return;
         }
         let diff = nb - this[current];
@@ -228,7 +199,7 @@ export default class GridTool extends Tool
                 this.#setSizes("rows");
                 return; 
             default:
-                console.error(this.text.errors.sizes[this.lang]);
+                console.error(this.getText("error.size"));
                 return 
         }
         let total = 1, 

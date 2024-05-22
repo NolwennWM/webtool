@@ -1,6 +1,7 @@
 "use strict";
 import WindowNWM from "../WindowNWM/WindowNWM.js";
 import Overlay from "../OverlayTool/OverlayTool.js";
+import { ToolText } from "./ToolText.js";
 
 /**
  * Abstract Class for HTML Dev Tools.
@@ -14,14 +15,7 @@ export default class Tool extends WindowNWM
     /** setting of the tool */
     settings = false;
     /** text translation of the tools */
-    #text = {
-        form: {
-            codeButton:{
-                fr: "Voir le Code",
-                en: "See the Code"
-            }
-        }
-    }
+    #text = ToolText;
     /** @type {HTMLElement} HTML Element containing the display of the tool */
     display;
     /** @type {HTMLElement} HTML Element containing the form of the tool */
@@ -76,14 +70,14 @@ export default class Tool extends WindowNWM
      * @param {Array} inputs Array of objects containing information about inputs
      * @param {object} text object containing all translations.
      */
-    generateForm(inputs, text)
+    generateForm(inputs)
     {
         for(const field of inputs)
         {
             const fieldSet = document.createElement("fieldset");
 
             const label = document.createElement("label");
-            label.textContent = text[field.name][this.lang];
+            label.textContent = this.getText("form."+field.name);
 
             const input = document.createElement("input");
             for (const attr in field) 

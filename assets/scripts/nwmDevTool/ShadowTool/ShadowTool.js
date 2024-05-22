@@ -1,6 +1,7 @@
 "use strict";
 
 import Tool from "../Tool/Tool.js";
+import { ShadowToolText } from "./ShadowToolText.js";
 
 
 
@@ -13,51 +14,7 @@ export default class ShadowTool extends Tool
     shadows = [];
     #href = "ShadowTool/ShadowTool.css"
     colorRegex = /^#[\da-fA-F]{3,6}$/;
-    text = {
-        languages:["fr", "en"],
-        form:{
-            legend: {
-                fr: "Ombre",
-                en: "Shadow"
-            },
-            addButton: {
-                fr: "Ajouter Ombre",
-                en: "Add Shadow"
-            },
-            delButton: {
-                fr: "Supprimer cette Ombre",
-                en: "Delete this Shadow"
-            },
-            offsetX: {
-                fr:"Décalage X",
-                en:"Offset X"
-            },
-            offsetY: {
-                fr:"Décalage Y",
-                en:"Offset Y"
-            },
-            blurRadius: {
-                fr:"Rayon du Flou",
-                en:"Blur Radius"
-            },
-            spreadRadius: {
-                fr:"Rayon de l'Étalement",
-                en:"Spread Radius"
-            },
-            color: {
-                fr:"Couleur",
-                en:"Color"
-            },
-            opacity: {
-                fr:"Opacité",
-                en:"Opacity"
-            },
-            inset:{
-                fr: "Incrusté",
-                en: "Inset"
-            }
-        }
-    };
+    text = ShadowToolText;
     defaultShadow = {
         offsetX: 5,
         offsetY: 5,
@@ -108,7 +65,7 @@ export default class ShadowTool extends Tool
     #createForm()
     {
         const btnAdd = document.createElement("button");
-        btnAdd.textContent = this.text.form.addButton[this.lang];
+        btnAdd.textContent = this.getText("form.addButton");
         btnAdd.classList.add("add-button");
         btnAdd.addEventListener("click", this.#generateShadow.bind(this));
         this.form.append(btnAdd);
@@ -126,14 +83,14 @@ export default class ShadowTool extends Tool
         this.form.dataset.id = this.nbShadow++;
 
         const leg = document.createElement("legend");
-        leg.textContent = this.text.form.legend[this.lang] +' '+ this.nbShadow;
+        leg.textContent = this.getText("form.legend") +' '+ this.nbShadow;
         this.form.append(leg);
 
         const delButton = document.createElement("button");
-        delButton.textContent = this.text.form.delButton[this.lang];
+        delButton.textContent = this.getText("form.delButton");
         delButton.addEventListener("pointerup", this.#deleteShadow.bind(this));
 
-        this.generateForm(this.formInfo, this.text.form);
+        this.generateForm(this.formInfo);
 
         this.form.append(delButton);
 

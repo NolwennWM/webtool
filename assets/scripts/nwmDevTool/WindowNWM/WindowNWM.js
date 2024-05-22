@@ -22,6 +22,10 @@ export default class WindowNWM extends HTMLElement
     header;
     /** @type {HTMLElement} HTML Element containing the explanation of the window */
     info;
+    /** text of the window */
+    text = {
+        info: ""
+    };
 
     constructor()
     {
@@ -57,6 +61,7 @@ export default class WindowNWM extends HTMLElement
 
         const infoDisplay = document.createElement("div");
         infoDisplay.classList.add("information", "hide");
+        this.getText("info");
         this.info = infoDisplay;
 
         const closeBTN = document.createElement("button");
@@ -102,6 +107,20 @@ export default class WindowNWM extends HTMLElement
     disconnectedCallback()
     {
         document.removeEventListener("pointerup", this.#events.endMoveWindow);
+    }
+    /**
+     * Get the text wanted in the selected language.
+     * @param {string} path path to text.
+     * @returns {string}
+     */
+    getText(path)
+    {
+        let text = this.text
+        for (const prop of path.split(".")) 
+        {
+            text = text[prop];
+        }
+        return text[this.lang];
     }
     #toggleInfo()
     {
