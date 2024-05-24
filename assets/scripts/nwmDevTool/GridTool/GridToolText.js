@@ -27,5 +27,9 @@ export const GridToolText = {
             fr: "Selectionnez seulement rows, columns ou both",
             en: "Select rows, columns or both only."
         }
+    },
+    info:{
+        fr: "",
+        en: "test"
     }
 };
