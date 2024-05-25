@@ -4,21 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NWM Dev Tool</title>
-    <link rel="stylesheet" href="./nwmDevTool/style.css">
-    <script type="module" src="./nwmDevTool/index.js" defer></script>
+    <link rel="stylesheet" href="./assets/styles/style.css">
+    <script type="module" src="./assets/scripts/index.js" defer></script>
 </head>
 <body>
     <header class="tools-header">
         <h1>NWM Developper's Tools</h1>
-        <button class="btn-tools">Tools</button>
-        <nav>
-            <menu></menu>
-        </nav>
+        <nwm-burger-menu class="tools-menu"></nwm-burger-menu>
     </header>
-    <div class="tools-container">
-        <div class="column column-left"></div>
-        <div class="column column-center"><nwm-box-shadow></nwm-box-shadow></div>
-        <div class="column column-right"><nwm-grid></nwm-grid></div>
-    </div>
+    <div class="tools-container"></div>
 </body>
 </html>

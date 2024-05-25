@@ -1,33 +1,15 @@
 "use strict";
+
+import { OverlayToolText } from "./OverlayToolText.js";
+
 /**
  * HTML Overlay Element
  */
 export default class Overlay extends HTMLElement
 {
-
-    #text = {
-        display:{
-            title:{
-                fr: "Copiez et adaptez le code ci-dessous",
-                en: "Copy and adapt the code below"
-            },
-            close: {
-                fr: "Fermer le Code",
-                en: "Close the Code"
-            },
-            copy:{
-                fr: "Copier dans le presse-papier",
-                en: "Copy in the clipboard"
-            },
-            copied:{
-                fr: "Code Copié",
-                en: "Code Copied"
-            },
-            html:{
-
-            }
-        }
-    }
+    #href = "./assets/scripts/nwmDevTool/OverlayTool/OverlayTool.css";
+    #text = OverlayToolText;
+    showHTML = false;
     constructor(lang)
     {
         super();
@@ -41,7 +23,7 @@ export default class Overlay extends HTMLElement
 
         const style = document.createElement("link");
         style.rel = "stylesheet";
-        style.href = "./nwmDevTool/OverlayTool/OverlayTool.css";
+        style.href = this.#href;
 
         this.shadowRoot.prepend(style);
         const displayBlock = document.createElement("div");
@@ -58,11 +40,17 @@ export default class Overlay extends HTMLElement
         copy.classList.add("copy");
         copy.textContent = this.#text.display.copy[this.lang];
 
+        const changeCode = document.createElement("button");
+        changeCode.classList.add("changeCode");
+        changeCode.textContent = this.#text.display.html[this.lang];
+        changeCode.style.display = "none";
+        this.changeBTN = changeCode;
+
         const pre = document.createElement("pre");
 
         this.code = document.createElement("code");
         
-        pre.append(copy, this.code);
+        pre.append(copy, this.code, changeCode);
         displayBlock.append(h3, pre, close);
         this.shadowRoot.append(displayBlock);
         document.body.append(this);
@@ -77,6 +65,19 @@ export default class Overlay extends HTMLElement
                 copy.textContent = this.#text.display.copy[this.lang];
                 
             }, 2000);
+        });
+        changeCode.addEventListener("click", ()=>{
+            if(this.showHTML)
+            {
+                changeCode.textContent = this.#text.display.html[this.lang];
+                this.displayCSS();
+            }
+            else
+            {
+                changeCode.textContent = this.#text.display.css[this.lang];
+                this.displayHTML();
+            }
+            this.showHTML = !this.showHTML;
         });
         close.addEventListener("click", ()=>this.remove());
     }
@@ -107,6 +108,16 @@ export default class Overlay extends HTMLElement
     {
         this.code.innerHTML = this.HTML.display;
         this.copy = this.HTML.copy;
+    }
+    displayCode()
+    {
+        if(this.CSS)
+        {
+            this.displayCSS();
+            if(this.HTML) this.changeBTN.style.display = "";
+            return;
+        }
+        if(this.HTML) this.displayHTML();
     }
 }
 customElements.define("nwm-overlay", Overlay);
