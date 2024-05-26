@@ -5,6 +5,7 @@ import { ToolText } from "./ToolText.js";
 
 /**
  * Abstract Class for HTML Dev Tools.
+     * @param {any} settings (optionnal) tool settings 
  */
 export default class Tool extends WindowNWM
 {
@@ -12,15 +13,15 @@ export default class Tool extends WindowNWM
     static windowClass = "nwm-tool";
     /** name of the localstorage */
     static toolStorage = "tools";
-    /** setting of the tool */
-    settings = false;
+    /** @type {any} setting of the tool */
+    settings = undefined;
     /** text translation of the tools */
     #text = ToolText;
     /** @type {HTMLElement} HTML Element containing the display of the tool */
     display;
     /** @type {HTMLElement} HTML Element containing the form of the tool */
     form;
-
+    
     constructor()
     {
         super();
@@ -186,7 +187,8 @@ export default class Tool extends WindowNWM
             const tool = tools[oldTool.name];
             if(tool)
             {
-                const t = new tool();
+                /** @type {Tool} HTML Element containing the display of the tool */
+                const t = new tool(oldTool.settings);
                 t.id = idTool;
                 t.style.cssText = oldTool.style;
                 t.classList.toggle("open", oldTool.open)
@@ -206,4 +208,14 @@ export default class Tool extends WindowNWM
     {
         return this.settings;
     }
+    /**
+     * should set the settings of the tool before initialization
+     * Have to be overided.
+     */
+    setToolSettings(){}
+    /**
+     * should set the elements of the tool after initialization
+     * Have to be overided.
+     */
+    setToolElements(){}
 }
