@@ -40,6 +40,20 @@ export const ShadowToolText = {
         inset:{
             fr: "Incrusté",
             en: "Inset"
+        },
+        exampleText:{
+            fr: "Saisissez votre Exemple",
+            en: "Write your Example"
+        },
+        shadow:{
+            box:{
+                fr: "Ombre pour Boîte",
+                en: "Box Shadow"
+            },
+            text:{
+                fr: "Ombre pour Text",
+                en: "Text Shadow"
+            }
         }
     }
 };

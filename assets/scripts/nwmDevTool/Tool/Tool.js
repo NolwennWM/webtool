@@ -84,6 +84,11 @@ export default class Tool extends WindowNWM
             for (const attr in field) 
             {
                 if(attr === "event")continue;
+                if(attr === "defaultText")
+                {
+                    input.value = this.getText("form."+field.name);
+                    continue
+                }
                 input[attr] = field[attr];   
             }
             input.addEventListener("input", field.event);

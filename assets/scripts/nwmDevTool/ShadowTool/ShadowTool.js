@@ -15,10 +15,11 @@ export default class ShadowTool extends Tool
     #href = "ShadowTool/ShadowTool.css"
     colorRegex = /^#[\da-fA-F]{3,6}$/;
     text = ShadowToolText;
+    isTextShadow = false;
     defaultShadow = {
         offsetX: 5,
         offsetY: 5,
-        blurRadius: 0,
+        blurRadius: 5,
         spreadRadius: 0,
         color: "#000000",
         opacity: 1,
@@ -31,36 +32,52 @@ export default class ShadowTool extends Tool
         {type: "number", name: "spreadRadius", min:-50 ,max:50, value:this.defaultShadow.spreadRadius, event:this.#setProperty.bind(this)},
         {type: "color", name: "color", value: this.defaultShadow.color, event:this.#setProperty.bind(this)},
         {type: "number", name: "opacity", min:0, max:1, step: 0.1,  value:this.defaultShadow.opacity, event:this.#setProperty.bind(this)},
-        {type: "checkbox", name: "inset", event:this.#setInset.bind(this)}
+        {type: "checkbox", name: "inset", event:this.#setInset.bind(this), checked: this.defaultShadow.inset},
     ];
     nbShadow = 0;
-    constructor()
+    constructor(settings = undefined)
     {
         super();
+        this.settings = settings;
+        this.setToolSettings();
 
         this.chooseLanguage();
         this.setTitle(this.constructor.title[this.lang]);
 
         this.#init();
+        this.setToolElements();
     }
     connectedCallback()
     {
         super.connectedCallback();
         if(!this.history)return;
-        console.log("shadow");
     }
     #init()
     {
         this.setCSS(this.#href);
         this.generateDisplayFormTool();
 
-        const block = document.createElement("div");
-        block.classList.add("box-shadow-target");
-        this.target = block;
-
-        this.display.append(block);
-
+        
         this.#createForm();
+        this.#generateTarget();
+        this.#generateShadow();
+    }
+    #generateTarget()
+    {
+        this.target?.remove();
+        const target = document.createElement("div");
+        this.target = target;
+        if(this.isTextShadow)
+        {
+            target.classList.add("text-shadow-target");
+            this.#setExampleText();
+        }
+        else
+        {
+            target.classList.add("box-shadow-target");
+        }
+        this.display.append(target);
+        this.#updateShadow();
     }
     #createForm()
     {
@@ -70,7 +87,21 @@ export default class ShadowTool extends Tool
         btnAdd.addEventListener("click", this.#generateShadow.bind(this));
         this.form.append(btnAdd);
 
-        this.#generateShadow();
+        const shadow = document.createElement("button");
+        shadow.textContent = this.isTextShadow?this.getText("form.shadow.box"):this.getText("form.shadow.text");
+        shadow.classList.add("shadow-switch-button");
+        shadow.addEventListener("click", this.#switchShadow.bind(this));
+
+        const textExample = document.createElement("input");
+        textExample.type = "text";
+        textExample.name = "exampleText";
+        textExample.addEventListener("input", this.#setExampleText.bind(this));
+        textExample.value = this.getText("form.exampleText");
+        textExample.classList.add("example-text");
+        textExample.classList.toggle("hide", !this.isTextShadow);
+        this.textExample = textExample;
+
+        this.display.append(shadow, textExample);
 
         this.generateCodeButton(this.display, this.#getCode);
     }
@@ -90,7 +121,18 @@ export default class ShadowTool extends Tool
         delButton.textContent = this.getText("form.delButton");
         delButton.addEventListener("pointerup", this.#deleteShadow.bind(this));
 
-        this.generateForm(this.formInfo);
+        const filteredForm = this.formInfo.filter((input)=>{
+            input.value = this.defaultShadow[input.name];
+            switch(input.name)
+            {
+                case "inset": 
+                    input.checked = this.defaultShadow[input.name];
+                case "spreadRadius":
+                    return this.isTextShadow? undefined:input;
+                default: return input;
+            }
+        })
+        this.generateForm(filteredForm);
 
         this.form.append(delButton);
 
@@ -141,7 +183,10 @@ export default class ShadowTool extends Tool
             shadow += ",\r\t\t ";
         }
         this.shadowProperty = shadow; 
-        this.target.style.boxShadow = shadow;       
+        
+        if(this.isTextShadow) this.target.style.textShadow = shadow;
+        else this.target.style.boxShadow = shadow;  
+             
     } 
 
     #deleteShadow(e)
@@ -151,6 +196,38 @@ export default class ShadowTool extends Tool
         e.target.closest(".shadow-set")?.remove();
         this.#updateShadow();
     }
+    #deleteShadows()
+    {
+        this.shadows = [];
+        this.nbShadow = 0;
+        const shadows = this.shadowRoot.querySelectorAll(".shadow-set");
+        for (const shadow of shadows) 
+        {
+            shadow.remove();    
+        }
+    }
+    #switchShadow(e)
+    {
+        this.isTextShadow = !this.isTextShadow;
+
+        if(this.isTextShadow)
+        {
+            e.target.textContent = this.getText("form.shadow.box");
+        }else
+        {
+            e.target.textContent = this.getText("form.shadow.text");
+        }
+        this.textExample.classList.toggle("hide", !this.isTextShadow);
+
+        this.#deleteShadows();
+        this.#generateTarget();
+        this.#generateShadow();
+    }
+    #setExampleText(e)
+    {
+        if(!this.textExample.value)return;
+        this.target.textContent = this.textExample.value;
+    }
     #getCode()
     {
         const overlay = this.generateOverlay();
@@ -159,13 +236,34 @@ export default class ShadowTool extends Tool
     }
     #getCSS()
     {
-        let displayCode = `<span class='selector'>.target</span>\r{\r\t<span class='property'>box-shadow</span>: <span class='value'>${this.shadowProperty}</span>;\r}`;
-        let copyCode = `.target\r{\r\tbox-shadow: ${this.shadowProperty};\r}`;
+        const shadow = this.isTextShadow?"text-shadow":"box-shadow";
+        let displayCode = `<span class='selector'>.target</span>\r{\r\t<span class='property'>${shadow}</span>: <span class='value'>${this.shadowProperty}</span>;\r}`;
+        let copyCode = `.target\r{\r\t${shadow}: ${this.shadowProperty};\r}`;
         return {display: displayCode, copy: copyCode}
     }
     getToolSettings()
     {
-        return true;
+        const tool = {isTextShadow: this.isTextShadow, shadows: this.shadows}
+        return tool;
+    }
+    setToolSettings()
+    {
+        if(!this.settings)return;
+        this.isTextShadow = this.settings.isTextShadow;
+    }
+    setToolElements()
+    {
+        if(!this.settings)return;
+        this.#deleteShadows();
+        const tmp = this.defaultShadow;
+        console.log(this.settings);
+        for (const shadow of this.settings.shadows) 
+        {
+            console.log(shadow);    
+            this.defaultShadow = shadow;
+            this.#generateShadow();
+        }
+        this.defaultShadow = tmp;
     }
 }
 customElements.define("nwm-box-shadow", ShadowTool);

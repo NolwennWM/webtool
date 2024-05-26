@@ -22,13 +22,26 @@
     align-items: center;
     padding: 5cqh 5cqw;
     position: relative;
+    min-width: 40cqw;
+}
+.box-shadow-target, .text-shadow-target
+{
+    height: 30cqh;
+    width: 30cqw;
 }
 .box-shadow-target
 {
     border: 2px solid black;
     border-radius: 10px;
-    height: 30cqh;
-    width: 30cqw;
+}
+.text-shadow-target
+{
+    font-size: 2em;
+    text-overflow: ellipsis;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .add-button
 {
@@ -42,6 +55,20 @@
     position: absolute;
     top: 5px;
     right: 5px;
+}
+.shadow-switch-button
+{
+    position: absolute;
+    top: 5px;
+    left: 5px;
+}
+.example-text
+{
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    translate: -50% 0;
+    text-align: center;
 }
 .shadow-set
 {

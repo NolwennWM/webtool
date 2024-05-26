@@ -117,8 +117,8 @@ export default class WindowNWM extends HTMLElement
         for (const prop of path.split(".")) 
         {
             text = text[prop];
+            if(!text)return "NO TEXT";
         }
-        if(!text)return "NO TEXT";
         return text[this.lang];
     }
     /**

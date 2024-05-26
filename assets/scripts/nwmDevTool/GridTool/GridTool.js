@@ -59,11 +59,11 @@ export default class GridTool extends Tool
     {
         super();
         this.settings = settings;
-        if(settings) this.setToolSettings();
+        this.setToolSettings();
         this.chooseLanguage();
         this.setTitle(this.constructor.title[this.lang]);
         this.#init();
-        if(settings) this.setToolElements();
+        this.setToolElements();
     }
     connectedCallback()
     {
@@ -487,6 +487,7 @@ export default class GridTool extends Tool
     setToolSettings()
     {
         const settings = this.settings;
+        if(!settings)return;
 
         this.columns = settings.form.columns;
         this.rows = settings.form.rows;
@@ -499,6 +500,7 @@ export default class GridTool extends Tool
     setToolElements()
     {
         const settings = this.settings;
+        if(!settings)return;
         
         for (const setting in settings) 
         {
