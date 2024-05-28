@@ -44,7 +44,7 @@ For the moment only a few tools are avaible, but a lot are in project :
 ## Futur of the project
 
 Many tools and easter eggs will be added.
-Otherwise I will maybe do a docker version or a vscode extension, it's still need to be think.
+Otherwise I will maybe do a docker version or a vscode extension, a WPA is also possible, it's still need to be think.
 But for the moment, the more important is to add new tools.
 I'm open to ideas of tools, design (*My biggest weakness*) or other improvement (*and more if you find bugs*).
 

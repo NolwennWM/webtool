@@ -121,3 +121,10 @@ function toggleItemsMenu()
         }
     }
 }
+
+/* 
+    TODO :
+    - change lang attribute on lang change
+    - add loading screen
+    - add favicon
+*/
