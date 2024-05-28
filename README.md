@@ -41,6 +41,13 @@ For the moment only a few tools are avaible, but a lot are in project :
 - FullScreen tools
 - Help Menu on tools
 
+## Futur of the project
+
+Many tools and easter eggs will be added.
+Otherwise I will maybe do a docker version or a vscode extension, it's still need to be think.
+But for the moment, the more important is to add new tools.
+I'm open to ideas of tools, design (*My biggest weakness*) or other improvement (*and more if you find bugs*).
+
 ## Licensing
 
 [WebTool](https://dev.marquiset.fr/) by [Nolwenn WEBER-MARQUISET](https://www.marquiset.fr/) is licensed under [CC BY-NC-SA 4.0![CC logo](https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1)![by logo](https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1)![nc logo](https://mirrors.creativecommons.org/presskit/icons/nc.svg?ref=chooser-v1)![sa logo](https://mirrors.creativecommons.org/presskit/icons/sa.svg?ref=chooser-v1)](https://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1)
