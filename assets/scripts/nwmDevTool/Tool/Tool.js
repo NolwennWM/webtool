@@ -79,6 +79,7 @@ export default class Tool extends WindowNWM
 
             const label = document.createElement("label");
             label.textContent = this.getText("form."+field.name);
+            label.setAttribute("for", field.id??"noId");
 
             const input = document.createElement("input");
             for (const attr in field) 

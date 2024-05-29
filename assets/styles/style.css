@@ -30,6 +30,19 @@ body
     grid-template-rows: 2fr 1fr 1fr;
     gap: 1dvw 1dvh; */
 }
+.loader-container
+{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    background-color: antiquewhite;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 /* .column
 {
     width: 100%;

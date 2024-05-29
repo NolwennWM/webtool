@@ -6,7 +6,7 @@
 }
 :host
 {
-    --header-bg-color: silver;
+    --header-bg-color: rgb(192, 192, 192);
     --header-height: 2em;
     --header-padding: 5px;
     --border-size: 5px;
@@ -114,7 +114,8 @@
     }
 }
 
-@container nwmTool (min-width: 700px)
+/* @container nwmTool (min-width: 700px) */
+@container nwmTool (orientation: landscape)
 {
     .window-container
     {

@@ -1,0 +1,33 @@
+{
+    "name": "WebTools by NWM",
+    "short_name": "WebTools",
+    "description":"This project is developped for help junior developpers to understand and use different properties. As trainer in web development, I saw many of my students have difficulties.",
+    "icons":[
+        {
+            "src": "./assets/images/icons/nwm-logo-static-bg-white.svg",
+            "type": "image/svg+xml",
+            "sizes": "any"
+        }
+    ],
+    "start_url": "./?source=pwa",
+    "display": "standalone",
+    "orientation": "landscape",
+    "theme_color": "#c0c0c0",
+    "background_color": "#faebd7",
+    "screenshots": [
+        {
+            "src": "./assets/images/screenshots/devTools-desktop-example.png",
+            "sizes": "1364x640",
+            "type": "image/png",
+            "form_factor": "wide",
+            "label": "Many tools used in same time on desktop"
+        },
+        {
+            "src": "./assets/images/screenshots/devTools-mobile-example.png",
+            "sizes": "428x942",
+            "type": "image/png",
+            "form_factor": "narrow",
+            "label": "Many tools used in same time on mobile"
+        }
+    ]
+}

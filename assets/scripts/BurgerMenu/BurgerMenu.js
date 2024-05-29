@@ -21,6 +21,7 @@ export default class BurgerMenu extends HTMLElement
 
         const button = document.createElement("button");
         button.classList.add("burger");
+        button.ariaLabel = "Menu Button"
         this.button = button;
 
         for(let i = 0; i < 3; i++)

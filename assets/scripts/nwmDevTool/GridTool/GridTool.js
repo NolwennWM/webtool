@@ -25,10 +25,10 @@ export default class GridTool extends Tool
     text = GridToolText;
     /** list of inputs in the form */
     formInfo = [
-        {type:"number",name:"columns",min:0, max:20, value:this.columns, event:this.#setGrid.bind(this)},
-        {type:"number",name:"rows",min:0, max:20, value:this.rows, event:this.#setGrid.bind(this)},
-        {type:"number",name:"columnGap",min:0, max:50, value:0, event:this.#setGrid.bind(this)},
-        {type:"number",name:"rowGap",min:0, max:50, value:0, event:this.#setGrid.bind(this)},
+        {type:"number",name:"columns", id:"columns",min:0, max:20, value:this.columns, event:this.#setGrid.bind(this)},
+        {type:"number",name:"rows", id:"rows",min:0, max:20, value:this.rows, event:this.#setGrid.bind(this)},
+        {type:"number",name:"columnGap", id:"columnGap",min:0, max:50, value:0, event:this.#setGrid.bind(this)},
+        {type:"number",name:"rowGap", id:"rowGap",min:0, max:50, value:0, event:this.#setGrid.bind(this)},
     ];
     /** id of the last column */
     columnsId = 0;
@@ -177,6 +177,7 @@ export default class GridTool extends Tool
                 inp.dataset.name = target;
                 inp.name = target+"Size"+id;
                 inp.value = this.defaultSize;
+                inp.ariaLabel = target+" Size";
 
                 inp.addEventListener("change", this.#inputToSize.bind(this));
                 form.append(inp);

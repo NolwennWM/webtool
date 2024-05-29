@@ -23,6 +23,7 @@ function generateMenu()
     const menuContainer = document.createElement("div")
     menuContainer.classList.add("navigation-container");
     const select = document.createElement("select");
+    select.ariaLabel = "Lang Selection"
 
     for(const l in langs)
     {
@@ -100,6 +101,7 @@ function checkLang(select)
     let l = url.searchParams.get("lang");
     if(!l || !langs[l]) l = 'en';
     select.value = l;
+    document.documentElement.lang = l;
     return l;
 }
 /**
@@ -124,7 +126,6 @@ function toggleItemsMenu()
 
 /* 
     TODO :
-    - change lang attribute on lang change
     - add loading screen
-    - add favicon
+    - on ctrl + arrow move the window as windows arrow
 */

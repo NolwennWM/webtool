@@ -75,7 +75,8 @@
     border: 1px dashed black;
 }
 
-@container nwmTool (min-width: 700px)
+/* @container nwmTool (min-width: 700px) */
+@container nwmTool (orientation: landscape)
 {
     .display-container
     {

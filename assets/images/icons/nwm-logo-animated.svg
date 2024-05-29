@@ -1,0 +1,48 @@
+<svg viewBox="0 0 400 400" width="200" height="200" stroke-width="10" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round">
+    <filter id="blurEffect"  filterUnits="userSpaceOnUse" x="-50%" y="-50%"  width="200%" height="200%">
+        <!-- blur the text at different levels-->
+        <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur5"/>
+        <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur10"/>
+        <feGaussianBlur in="SourceGraphic" stdDeviation="20" result="blur20"/>
+        <feGaussianBlur in="SourceGraphic" stdDeviation="30" result="blur30"/>
+        <feGaussianBlur in="SourceGraphic" stdDeviation="50" result="blur50"/>
+        <!-- merge all the blurs except for the first one -->
+        <feMerge result="blur-merged">
+            <feMergeNode in="blur10"/>
+            <feMergeNode in="blur20"/>
+            <feMergeNode in="blur30"/>
+            <feMergeNode in="blur50"/>
+        </feMerge>
+        <!-- recolour the merged blurs red-->
+        <feColorMatrix result="color-blur" in="blur-merged" type="matrix"
+                        values="1 0 0 0 0
+                                0 0.06 0 0 0
+                                1 0 0.44 0 0
+                                0 0 0 1 0" />
+        <feMerge>
+            <feMergeNode in="color-blur"/>       <!-- largest blurs coloured -->
+            <feMergeNode in="blur5"/>          <!-- smallest blur left white -->
+            <feMergeNode in="SourceGraphic"/>  <!-- original white text -->
+        </feMerge>
+    </filter>
+    <!-- N -->
+    <polyline fill="none" stroke="blue" points="105 300, 105 100, 295 295, 295 100" stroke-dasharray="670" stroke-dashoffset="670" filter="url(#blurEffect)"> 
+        <animate id="n" attributeType="XML" attributeName="stroke-dashoffset" dur="2s" to="0"  keyTimes="0; 0.75; 1" values="670; 0; 0"/>
+    </polyline>
+    <!-- W -->
+    <polyline fill="none" stroke="blue" points="105 100, 105 295, 200 200, 295 295, 295 100" stroke-dasharray="660" stroke-dashoffset="660" filter="url(#blurEffect)">
+        <animate id="w" attributeType="XML" attributeName="stroke-dashoffset" dur="2s" to="0" begin="n.end" keyTimes="0; 0.75; 1" values="660; 0; 0"/>
+    </polyline>
+    <!-- M -->
+    <polyline fill="none" stroke="blue" points="105 295, 105 108, 200 200, 295 108, 295 295" stroke-dasharray="675" stroke-dashoffset="675" filter="url(#blurEffect)">
+        <animate id="m" attributeType="XML" attributeName="stroke-dashoffset" dur="1.5s" to="0" begin="w.end" fill="freeze" />
+    </polyline>
+    <!-- _ top -->
+    <line x1="105" y1="100" x2="295" y2="100" stroke="blue" stroke-dasharray="200" stroke-dashoffset="200" filter="url(#blurEffect)">
+        <animate attributeType="XML" attributeName="stroke-dashoffset" dur="0.5s" to="0" begin="m.end" fill="freeze" />
+    </line>
+    <!-- _ bottom -->
+    <line x1="105" y1="300" x2="295" y2="300" stroke="blue" stroke-dasharray="200" stroke-dashoffset="-200" filter="url(#blurEffect)">
+        <animate attributeType="XML" attributeName="stroke-dashoffset" dur="0.5s" to="0" begin="m.end" fill="freeze" />
+    </line>
+</svg>

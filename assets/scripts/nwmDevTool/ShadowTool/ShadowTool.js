@@ -256,10 +256,9 @@ export default class ShadowTool extends Tool
         if(!this.settings)return;
         this.#deleteShadows();
         const tmp = this.defaultShadow;
-        console.log(this.settings);
         for (const shadow of this.settings.shadows) 
         {
-            console.log(shadow);    
+            if(!shadow) continue;  
             this.defaultShadow = shadow;
             this.#generateShadow();
         }
@@ -267,3 +266,6 @@ export default class ShadowTool extends Tool
     }
 }
 customElements.define("nwm-box-shadow", ShadowTool);
+/* 
+    TODO: reset compteur d'ombre et tableau d'ombre sauvegardé
+*/

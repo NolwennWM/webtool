@@ -24,14 +24,15 @@
         width: 100%;
     }
 }
-@media screen and (min-width: 700px) 
+/*@media screen and (min-width: 700px) 
 {
-   /* :host
+    :host
     {
          aspect-ratio: 16/9;
-    } */
-}
-@container nwmTool (min-width: 700px)
+    } 
+}*/
+/* @container nwmTool (min-width: 700px) */
+@container nwmTool (orientation: landscape)
 {
     .form-container
     {
