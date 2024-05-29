@@ -8,11 +8,13 @@ const searchLangs = {fr: "Rechercher un Outil", en: "Search a Tool"}
 const container = document.querySelector(".tools-container");
 const nav = document.querySelector(".tools-menu");
 
-let toolsMenu;
+let toolsMenu, menuContainer;
+document.addEventListener("DOMContentLoaded", disableLoader);
 
 generateMenu();
 GridTool.getLocalStorageTools(container, tools);
 GridTool.setLocalStorageEvent();
+// disableLoader();
 /**
  * Generate Navigation Menu
  */
@@ -20,7 +22,7 @@ function generateMenu()
 {
     
     if(!nav) return;
-    const menuContainer = document.createElement("div")
+    menuContainer = document.createElement("div")
     menuContainer.classList.add("navigation-container");
     const select = document.createElement("select");
     select.ariaLabel = "Lang Selection"
@@ -36,11 +38,13 @@ function generateMenu()
     select.addEventListener("input", selectLang);
 
     const menu = document.createElement("menu");
+
     const searchInput = document.createElement("input");
     searchInput.type = "search";
     searchInput.setAttribute("list", "toolsList");
     searchInput.placeholder = searchLangs[selectedLang];
-    searchInput.addEventListener("input", toggleItemsMenu)
+    searchInput.addEventListener("input", toggleItemsMenu);
+
     const toolsList = document.createElement("datalist");
     toolsList.id = "toolsList";
     
@@ -67,7 +71,8 @@ function generateMenu()
 
     
     toolsMenu = menu.querySelectorAll("li");
-    menuContainer.append(menu, searchInput, toolsList, select)
+
+    menuContainer.append(menu, searchInput, toolsList, select);
     nav.appendNav(menuContainer);
     nav.generateCSS("./assets/styles/toolMenu.css");
 }
@@ -123,9 +128,23 @@ function toggleItemsMenu()
         }
     }
 }
-
+function disableLoader()
+{
+    const loader = document.querySelector(".loader-container");
+    if(!loader)return;
+    setTimeout(()=>{
+        loader.addEventListener("transitionend", ()=>{
+            const credit = document.querySelector(".footer-credit")??"";
+            menuContainer?.append(credit);
+            loader.remove()
+        });
+        loader.style.opacity = 0;
+    },1000)
+    
+}
 /* 
     TODO :
-    - add loading screen
+    - lister tout les outils ouverts dans un tableau dans l'objet window et vérifier qu'ils ont bien chargé avant de désactiver le loader
     - on ctrl + arrow move the window as windows arrow
+    - Ajouter worker
 */

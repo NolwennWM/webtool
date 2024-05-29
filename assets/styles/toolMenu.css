@@ -32,4 +32,16 @@
             }
         }
     }
+    .footer-credit
+    {
+        ul
+        {
+            padding: 10px 0;
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 10px;
+        }
+    }
 }

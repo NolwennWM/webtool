@@ -8,33 +8,42 @@
     <title>NWM Web Tool</title>
     <link rel="manifest" href="./manifest.json">
     <link rel="shortcut icon" href="./assets/images/icons/nwm-logo-static-bg-white.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="./assets/styles/style.css?v=0.1.0">
-    <script type="module" src="./assets/scripts/index.js?v=0.1.0" defer></script>
+    <link rel="stylesheet" href="./assets/styles/style.css?v=0.2.0">
+    <script type="module" src="./assets/scripts/index.js?v=0.2.0" defer></script>
 </head>
 <body>
     <header class="tools-header">
         <h1 class="main-title">NWM Developper's Tools</h1>
         <nwm-burger-menu class="tools-menu"></nwm-burger-menu>
     </header>
-    <div class="tools-container">
-        <noscript>
-            <h2>Javascript disabled/désactivé</h2>
-            <h3>English</h3>
-            <p>
-                Sorry, this site only works with javascript and it appears you have disabled it. <br>
-                Please enable Javascript to take advantage of our features. <br>
-                Otherwise, we invite you to join us on one of our future projects that does not use javascript.
-            </p>
-            <h3>Français</h3>
-            <p>
-                Désolé, ce site fonctionne uniquement grâce à javascript et il semblerait que vous l'ayez désactivé. <br>
-                Veuillez activer Javascript pour profiter de nos fonctionnalités. <br>
-                Dans le cas contraire, nous vous donnons rendez-vous sur un de nos futurs projets n'utilisant pas javascript.
-            </p>
-        </noscript>
-    </div>
+    <div class="tools-container"></div>
     <div class="loader-container">
         <img src="./assets/images/icons/nwm-logo-animated-loop.svg" alt="animated logo of NWM">
+        <noscript>
+            <h2>Javascript disabled/désactivé</h2>
+            <div>
+                <h3>English</h3>
+                <p>
+                    Sorry, this site only works with javascript and it appears you have disabled it. <br>
+                    Please enable Javascript to take advantage of our features. <br>
+                    Otherwise, we invite you to join us on one of our future projects that does not use javascript.
+                </p>
+            </div>
+            <div>
+                <h3>Français</h3>
+                <p>
+                    Désolé, ce site fonctionne uniquement grâce à javascript et il semblerait que vous l'ayez désactivé. <br>
+                    Veuillez activer Javascript pour profiter de nos fonctionnalités. <br>
+                    Dans le cas contraire, nous vous donnons rendez-vous sur un de nos futurs projets n'utilisant pas javascript.
+                </p>
+            </div>
+        </noscript>
+        <footer class="footer-credit">
+            <ul class="liste-credit">
+                <li><a href="https://www.marquiset.fr" target="_blank">Nolwenn Weber-Marquiset</a></li>
+                <li><a href="https://github.com/NolwennWM" target="_blank">Github</a></li>
+            </ul>
+        </footer>
     </div>
 </body>
 </html>
