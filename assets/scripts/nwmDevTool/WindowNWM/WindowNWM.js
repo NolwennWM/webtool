@@ -22,6 +22,8 @@ export default class WindowNWM extends HTMLElement
     header;
     /** @type {HTMLElement} HTML Element containing the explanation of the window */
     info;
+    /** @type {HTMLElement} HTML Element containing the main content of the window */
+    container;
     /** text of the window */
     text = {info:""};
 
@@ -41,7 +43,7 @@ export default class WindowNWM extends HTMLElement
 
         this.setCSS("WindowNWM/WindowNWM.css");
 
-        this.classList.add("open", this.constructor.windowClass)
+        this.classList.add("open", this.constructor.windowClass, this.constructor.name);
         this.addEventListener("pointerdown", this.activeWindow.bind(this));
         this.activeWindow();
         this.#generateID();
@@ -105,6 +107,17 @@ export default class WindowNWM extends HTMLElement
     disconnectedCallback()
     {
         document.removeEventListener("pointerup", this.#events.endMoveWindow);
+    }
+    /**
+     * If the window is opened two times, the second is canceled and the first put as active.
+     * Called in the connectedCallback
+     */
+    openOnce()
+    {
+        const other = document.querySelector(`.${this.constructor.name}:not(#${this.id})`);
+        if(!other) return;
+        other.activeWindow();
+        this.remove();
     }
     /**
      * Get the text wanted in the selected language.

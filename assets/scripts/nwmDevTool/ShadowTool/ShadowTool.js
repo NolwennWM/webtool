@@ -7,14 +7,11 @@ import { ShadowToolText } from "./ShadowToolText.js";
 
 export default class ShadowTool extends Tool
 {
-    static title = {
-        fr: "Générateur d'Ombre",
-        en: "Shadow Generator"
-    };
+    static title = ShadowToolText.title;
+    text = ShadowToolText;
     shadows = [];
     #href = "ShadowTool/ShadowTool.css"
     colorRegex = /^#[\da-fA-F]{3,6}$/;
-    text = ShadowToolText;
     isTextShadow = false;
     defaultShadow = {
         offsetX: 5,

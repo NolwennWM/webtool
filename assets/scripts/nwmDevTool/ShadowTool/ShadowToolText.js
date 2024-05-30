@@ -1,5 +1,9 @@
 export const ShadowToolText = {
     languages:["fr", "en"],
+    title:{
+        fr: "Générateur d'Ombre",
+        en: "Shadow Generator"
+    },
     form:{
         legend: {
             fr: "Ombre",

@@ -1,5 +1,9 @@
 export const GridToolText = {
     languages: ["fr", "en"],
+    title :{
+        fr: "Générateur de Grid",
+        en: "Grid Generator"
+    },
     form:{
         columns:{
             fr: "Colonnes",

@@ -17,10 +17,7 @@ export default class GridTool extends Tool
     /** numbers of colors set in the css for children */
     nbChildrenColors = 5;
     /** title translation of the tool */
-    static title ={
-            fr: "Générateur de Grid",
-            en: "Grid Generator"
-        };
+    static title = GridToolText.title;
     /** text translation of the tool */
     text = GridToolText;
     /** list of inputs in the form */
@@ -61,7 +58,8 @@ export default class GridTool extends Tool
         this.settings = settings;
         this.setToolSettings();
         this.chooseLanguage();
-        this.setTitle(this.constructor.title[this.lang]);
+        // this.setTitle(this.text.title[this.lang]);
+        this.setTitle(this.getText("title"));
         this.#init();
         this.setToolElements();
     }
