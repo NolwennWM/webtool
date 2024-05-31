@@ -25,6 +25,7 @@ export default class TaskManagerTool extends WindowNWM
     {
         this.obs = new MutationObserver(this.handleTaskObserver.bind(this));
         this.obs.observe(window, this.configObserver);
+        // Ne fonctionne pas, mettre en place un setter?
     }
     handleTaskObserver(mutations)
     {
