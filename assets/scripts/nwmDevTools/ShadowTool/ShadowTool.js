@@ -38,7 +38,6 @@ export default class ShadowTool extends Tool
         this.settings = settings;
         this.setToolSettings();
 
-        this.chooseLanguage();
         this.setTitle(this.constructor.title[this.lang]);
 
         this.#init();

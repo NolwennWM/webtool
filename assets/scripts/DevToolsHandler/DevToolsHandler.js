@@ -154,7 +154,7 @@ export default class DevToolsHandler
         setTimeout(()=>{
             loader.addEventListener("transitionend", ()=>{
                 const credit = document.querySelector(".footer-credit")??"";
-                console.log(this.menuContainer);
+                
                 this.menuContainer?.append(credit);
                 loader.remove()
             });

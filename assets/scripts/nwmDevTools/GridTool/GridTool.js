@@ -57,8 +57,7 @@ export default class GridTool extends Tool
         super();
         this.settings = settings;
         this.setToolSettings();
-        this.chooseLanguage();
-        // this.setTitle(this.text.title[this.lang]);
+
         this.setTitle(this.getText("title"));
         this.#init();
         this.setToolElements();
