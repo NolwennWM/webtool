@@ -12,7 +12,7 @@ export default class Tool extends WindowNWM
     /** class of tool's window */
     static windowClass = "nwm-tool";
     /** name of the localstorage */
-    static toolStorage = "tools";
+    static toolStorage = "devToolsList";
     /** @type {any} setting of the tool */
     settings = undefined;
     /** text translation of the tools */

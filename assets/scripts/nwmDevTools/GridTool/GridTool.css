@@ -47,6 +47,7 @@
     & .box
     {
         position: relative;
+        cursor: crosshair;
     }
     & .grid-child 
     {

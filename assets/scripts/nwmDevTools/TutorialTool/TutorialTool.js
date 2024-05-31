@@ -10,7 +10,7 @@ export default class TutorialTool extends WindowNWM
     constructor()
     {
         super();
-        this.chooseLanguage();
+        
         this.setTitle(this.getText("title"));
         this.init();
     }
@@ -21,11 +21,16 @@ export default class TutorialTool extends WindowNWM
     }
     static firstTime(container)
     {
-        const saved = localStorage.getItem(this.constructor.name);
-        if(saved || !container) return;
+        const saved = localStorage.getItem(this.localStorageSettings);
+
+        const settings = saved?JSON.parse(saved):{};
+        if(settings.tutorial || !container)return;
+
         const tutorial = new this();
         container.append(tutorial);
-        localStorage.setItem(this.constructor.name, "true");
+
+        settings.tutorial = true;
+        localStorage.setItem(this.localStorageSettings, JSON.stringify(settings));
     }
     init()
     {

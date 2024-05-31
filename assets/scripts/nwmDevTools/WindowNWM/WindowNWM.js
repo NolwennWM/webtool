@@ -1,15 +1,26 @@
 "use strict";
+
+import { WindowNWMText } from "./WindowNWMText.js";
+
 // interessant mais pas géré par firefox TODO : quand géré mettre text en voir config en json
 // import * as text from "./test.json" with {type: "json"}; 
 // console.log(text);
 export default class WindowNWM extends HTMLElement
 {
     /** class of the window HTML Element */
-    static windowClass = "nwm-window"
-    /** path for the folder of this class */
-    #href = "./assets/scripts/nwmDevTool/";
+    static windowClass = "nwm-window";
+    /** Key for local storage settings */
+    localStorageSettings = "devToolsSettings";
+    /** Name for task manager */
+    taskManagerName = "devToolsNWM";
+    /** Name for task manager property */
+    taskManagerProperty = "_taskManager";
+    /** path for the folder of the tools */
+    #href = "./assets/scripts/nwmDevTools/";
     /** default language of the window */
     lang = "fr";
+    /** Text of the windows */
+    text = WindowNWMText;
     /** @type {HTMLElement} HTML Element containing the title of the window */
     #title;
     /** list of functions binded for event listeners */
@@ -24,14 +35,14 @@ export default class WindowNWM extends HTMLElement
     info;
     /** @type {HTMLElement} HTML Element containing the main content of the window */
     container;
-    /** text of the window */
-    text = {info:""};
 
     constructor()
     {
         super();
         this.#events.movingWindow = this.#movingWindow.bind(this);
         this.#events.endMoveWindow = this.#endMoveWindow.bind(this);
+
+        this.chooseLanguage();
         this.#init();
     }
     /**
@@ -66,21 +77,25 @@ export default class WindowNWM extends HTMLElement
         const closeBTN = document.createElement("button");
         closeBTN.classList.add("close", "btn");
         closeBTN.innerHTML = "&#10060;";
+        closeBTN.title = this.getText("buttons.close");
         closeBTN.addEventListener("pointerup", this.#closeWindow.bind(this));
         
         const toggleBTN = document.createElement("button");
         toggleBTN.classList.add("toggle", "btn");
         toggleBTN.innerHTML = "&#x23AF;";
+        toggleBTN.title = this.getText("buttons.minimize");
         toggleBTN.addEventListener("pointerup", this.#toggleWindow.bind(this));
 
         const fsBTN = document.createElement("button");
         fsBTN.classList.add("fullscreen", "btn");
         fsBTN.innerHTML = "&#x26F6;";
+        fsBTN.title = this.getText("buttons.fullscreen");
         fsBTN.addEventListener("pointerup", this.#toggleFullscreen.bind(this));
 
         const infoBTN = document.createElement("button");
         infoBTN.classList.add("info", "btn");
         infoBTN.innerHTML = "&#x2754;";
+        infoBTN.title = this.getText("buttons.help");
         infoBTN.addEventListener("pointerup", this.#toggleInfo.bind(this));
 
         this.#title = document.createElement("h2");
@@ -100,6 +115,7 @@ export default class WindowNWM extends HTMLElement
         document.addEventListener("pointerup", this.#events.endMoveWindow);
         this.info.innerHTML = this.getText("info");
         if(!this.style.top) this.setPosition();
+        this.addToTaskManager();
     }
     /**
      * LifeCycle called if the window is removed from DOM
@@ -107,6 +123,7 @@ export default class WindowNWM extends HTMLElement
     disconnectedCallback()
     {
         document.removeEventListener("pointerup", this.#events.endMoveWindow);
+        this.removeFromTaskManager();
     }
     /**
      * If the window is opened two times, the second is canceled and the first put as active.
@@ -120,13 +137,42 @@ export default class WindowNWM extends HTMLElement
         this.remove();
     }
     /**
+     * Add a property taskManager to the window object if doesn't exist.
+     * Then add the window to the task manager list
+     */
+    addToTaskManager()
+    {
+        if(window["_taskManager"] === undefined) window["_taskManager"] = {name: this.taskManagerName, toolsList:{}};
+        if(window["_taskManager"]?.name != this.taskManagerName) return;
+
+        window["_taskManager"].toolsList[this.id] = this.#title.textContent;
+    }
+    /**
+     * Remove the window from the task manager list
+     */
+    removeFromTaskManager()
+    {
+        if(window["_taskManager"]?.name != this.taskManagerName || !window["_taskManager"].toolsList[this.id]) return;
+        
+        delete window["_taskManager"].toolsList[this.id];
+    }
+    /**
+     * get data from the task manager
+     * @returns {object|undefined} task manager data
+     */
+    getTaskManagerData()
+    {
+        if(window["_taskManager"]?.name != this.taskManagerName) return;
+        return window["_taskManager"];
+    }
+    /**
      * Get the text wanted in the selected language.
      * @param {string} path path to text.
      * @returns {string}
      */
     getText(path)
     {
-        let text = this.text
+        let text = this.text;
         for (const prop of path.split(".")) 
         {
             text = text[prop];
@@ -275,10 +321,9 @@ export default class WindowNWM extends HTMLElement
      * set the language of the window.
      */
     chooseLanguage()
-    {
-        // TODO: save lang in localstorage
-        const params = new URLSearchParams(document.location.search);
-        const lang = params.get("lang");
+    {        
+        const lang = document.documentElement.lang;
+        
         if(!lang || !this.text || !this.text.languages.includes(lang))
         {
             this.lang = "en";
