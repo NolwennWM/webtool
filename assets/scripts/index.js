@@ -19,4 +19,5 @@ Tool.setLocalStorageEvent();
     - changer curseur grid
     - finir le tutoriel
     - ajouter titles sur les boutons de la fenêtre.
+    - ajouter un confirm optionnel à openOnce
 */
