@@ -21,7 +21,9 @@ export default class Tool extends WindowNWM
     display;
     /** @type {HTMLElement} HTML Element containing the form of the tool */
     form;
-    
+    /**
+     * Set CSS for tools
+     */
     constructor()
     {
         super();

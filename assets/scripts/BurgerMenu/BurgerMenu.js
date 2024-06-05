@@ -1,15 +1,33 @@
 "use strict"
+/**
+ * Generate a burger menu with overlay
+ */
 export default class BurgerMenu extends HTMLElement
 {
+    /** url of CSS file */
     #href = "./assets/scripts/BurgerMenu/BurgerMenu.css";
+    /** Indicate if the menu is open */
     #open = false;
+    /** Indicate if the menu is transitionning */
     #transitionning = false;
+    /** @type {HTMLElement} container of the whole menu */
+    container;
+    /** @type {HTMLElement} button opening or closing menu */
+    button;
+    /** @type {HTMLElement} container for the navigation */
+    nav;
+    /**
+     * generate the Menu HTML Element
+     */
     constructor()
     {
         super();
-        this.generateHTML()
+        this.#generateHTML()
     }
-    generateHTML()
+    /**
+     * Generate HTML of the menu
+     */
+    #generateHTML()
     {
         this.attachShadow({mode:"open"});
 
@@ -39,6 +57,10 @@ export default class BurgerMenu extends HTMLElement
         this.shadowRoot.append(button, container);
 
     }
+    /**
+     * Generate a link tag and append it in the custom element.
+     * @param {string} href url for a css link
+     */
     generateCSS(href)
     {
         const style = document.createElement("link");

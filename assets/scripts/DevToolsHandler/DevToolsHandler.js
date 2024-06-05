@@ -1,18 +1,27 @@
 "use strict";
 
 import { DevToolsHandlerText } from "./DevToolsHandlerText.js";
-
+/**
+ * Handle the working flow of the app
+ */
 export default class DevToolsHandler
 {
+    /** list of the tools currently enabled */
     tools = {};
+    /** languages available for the app */
     langs = DevToolsHandlerText.langs;
+    /** text for the search input */
     searchLangs = DevToolsHandlerText.searchLangs;
+    /** navigation of the app */
     nav = document.querySelector(".tools-menu");
+    /** container for the tools */
     container = document.querySelector(".tools-container");
+    /** @type {NodeList} list of the tools open button */
     toolsMenu; 
+    /** @type {HTMLElement} container for the menu */
     menuContainer;
     /**
-     * Handle the working flow of the app
+     * disable loader, generate menu and handle start menu
      * @param {Object} tools list of tools 
      */
     constructor(tools)
@@ -22,6 +31,9 @@ export default class DevToolsHandler
         this.generateMenu();
         this.handleTutorial();
     }
+    /**
+     * handle the first appearence of the tutorial.
+     */
     handleTutorial()
     {
         if(!this.tools.TutorialTool)return;

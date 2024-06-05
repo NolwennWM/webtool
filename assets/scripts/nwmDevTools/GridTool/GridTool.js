@@ -51,7 +51,12 @@ export default class GridTool extends Tool
     rowsForm;
     /** @type {HTMLElement} HTML Element where are the inputs for the columns */
     columnsForm;
-    
+    /** @type {object} object containing all the settings of the tool */
+    settings;
+    /**
+     * prepare settings of the tool, generate title and HTML
+     * @param {object|undefined} settings 
+     */
     constructor(settings = undefined)
     {
         super();
@@ -294,7 +299,8 @@ export default class GridTool extends Tool
         this.#setSizes(name);
     }
     /**
-     * Affiche un exemple de code HTML correspondant à la grid
+     * Return HTML code of the grid.
+     * @returns {object} html code
      */
     #getHTML()
     {
@@ -318,7 +324,8 @@ export default class GridTool extends Tool
         return {display: displayCode, copy: copyCode}
     }
     /**
-     * Affiche un exemple de code CSS correspondant à la grid
+     * Return CSS code of the grid.
+     * @returns {object} css code
      */
     #getCSS()
     {
@@ -455,7 +462,10 @@ export default class GridTool extends Tool
         }
         event.target.parentElement.remove();
     }
-
+    /**
+     * return the settings of the tool
+     * @returns {object}
+     */
     getToolSettings()
     {
         const 
@@ -482,6 +492,9 @@ export default class GridTool extends Tool
 
         return tool;
     }
+    /**
+     * set settings tool before initialization
+     */
     setToolSettings()
     {
         const settings = this.settings;
@@ -495,6 +508,9 @@ export default class GridTool extends Tool
             input.value = settings.form[input.name];
         }
     }
+    /**
+     * set tool elements after initialization
+     */
     setToolElements()
     {
         const settings = this.settings;

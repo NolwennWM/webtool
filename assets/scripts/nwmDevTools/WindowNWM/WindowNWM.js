@@ -5,6 +5,9 @@ import { WindowNWMText } from "./WindowNWMText.js";
 // interessant mais pas géré par firefox TODO : quand géré mettre text en voir config en json
 // import * as text from "./test.json" with {type: "json"}; 
 // console.log(text);
+/**
+ * HTML custom element for a window
+ */
 export default class WindowNWM extends HTMLElement
 {
     /** class of the window HTML Element */
@@ -35,7 +38,9 @@ export default class WindowNWM extends HTMLElement
     info;
     /** @type {HTMLElement} HTML Element containing the main content of the window */
     container;
-
+    /**
+     * Set language and initialize the window
+     */
     constructor()
     {
         super();
