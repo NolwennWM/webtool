@@ -10,6 +10,7 @@
     --header-height: 2em;
     --header-padding: 5px;
     --border-size: 5px;
+    --header-height-total: calc(var(--header-height) + var(--header-padding) * 2);
 
     container: nwmTool / size;
     border: var(--border-size) solid var(--header-bg-color);
@@ -43,7 +44,7 @@
     background-color: var(--header-bg-color);
     text-align: center;
     cursor: grab;
-    height: calc(var(--header-height) + var(--header-padding) * 2);
+    height: var(--header-height-total);
     display: grid;
     grid-template-columns: 1fr auto;
     align-items: center;
@@ -95,7 +96,7 @@
 .window-container
 {
     width: 100cqw;
-    height: 90cqh;
+    height: calc(100cqh - var(--header-height-total));
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 1fr auto;

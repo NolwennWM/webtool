@@ -22,6 +22,13 @@ export default class WindowNWM extends HTMLElement
     #href = "./assets/scripts/nwmDevTools/";
     /** default language of the window */
     lang = "fr";
+    /** default position of the window */
+    defaultPosition = {
+        height : "80dvh",
+        width : "80dvw",
+        top : "10dvh",
+        left : "10dvw"
+    };
     /** Text of the windows */
     text = WindowNWMText;
     /** @type {HTMLElement} HTML Element containing the title of the window */
@@ -83,7 +90,7 @@ export default class WindowNWM extends HTMLElement
         closeBTN.classList.add("close", "btn");
         closeBTN.innerHTML = "&#10060;";
         closeBTN.title = this.getText("buttons.close");
-        closeBTN.addEventListener("pointerup", this.#closeWindow.bind(this));
+        closeBTN.addEventListener("pointerup", this.closeWindow.bind(this));
         
         const toggleBTN = document.createElement("button");
         toggleBTN.classList.add("toggle", "btn");
@@ -147,19 +154,19 @@ export default class WindowNWM extends HTMLElement
      */
     addToTaskManager()
     {
-        if(window["_taskManager"] === undefined) window["_taskManager"] = {name: this.taskManagerName, toolsList:{}};
-        if(window["_taskManager"]?.name != this.taskManagerName) return;
+        if(window[this.taskManagerProperty] === undefined) window[this.taskManagerProperty] = {name: this.taskManagerName, toolsList:{}};
+        if(window[this.taskManagerProperty]?.name != this.taskManagerName) return;
 
-        window["_taskManager"].toolsList[this.id] = this.#title.textContent;
+        window[this.taskManagerProperty].toolsList[this.id] = this.#title.textContent;
     }
     /**
      * Remove the window from the task manager list
      */
     removeFromTaskManager()
     {
-        if(window["_taskManager"]?.name != this.taskManagerName || !window["_taskManager"].toolsList[this.id]) return;
+        if(window[this.taskManagerProperty]?.name != this.taskManagerName || !window[this.taskManagerProperty].toolsList[this.id]) return;
         
-        delete window["_taskManager"].toolsList[this.id];
+        delete window[this.taskManagerProperty].toolsList[this.id];
     }
     /**
      * get data from the task manager
@@ -241,7 +248,7 @@ export default class WindowNWM extends HTMLElement
     /**
      * remove the window from HTML
      */
-    #closeWindow()
+    closeWindow()
     {
         this.remove();
     }
@@ -262,12 +269,18 @@ export default class WindowNWM extends HTMLElement
         }
         this.id = id;
     }
+    reloadWindow()
+    {
+        const container = this.parentElement;
+        this.remove();
+        container.append(new this.constructor());
+    }
     setPosition()
     {
-        this.style.height = "80dvh";
-        this.style.width = "80dvw";
-        this.style.top = "10dvh";
-        this.style.left = "10dvw";
+        this.style.height = this.defaultPosition.height;
+        this.style.width = this.defaultPosition.width;
+        this.style.top = this.defaultPosition.top;
+        this.style.left = this.defaultPosition.left;
     }
     /**
      * put the last clicked window over the others
