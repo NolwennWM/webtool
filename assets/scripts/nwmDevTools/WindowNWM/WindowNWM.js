@@ -5,6 +5,7 @@ import { WindowNWMText } from "./WindowNWMText.js";
 // interessant mais pas géré par firefox TODO : quand géré mettre text en voir config en json
 // import * as text from "./test.json" with {type: "json"}; 
 // console.log(text);
+
 /**
  * HTML custom element for a window
  */
@@ -269,12 +270,18 @@ export default class WindowNWM extends HTMLElement
         }
         this.id = id;
     }
+    /**
+     * close the window for reopen it.
+     */
     reloadWindow()
     {
         const container = this.parentElement;
         this.remove();
         container.append(new this.constructor());
     }
+    /**
+     * Set the window to the default position and size
+     */
     setPosition()
     {
         this.style.height = this.defaultPosition.height;

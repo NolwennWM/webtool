@@ -1,13 +1,25 @@
 import WindowNWM from "../WindowNWM/WindowNWM.js";
 import { TaskManagerToolText } from "./TaskManagerToolText.js";
 
+/**
+ * Task manager having power of life and death on other windows
+ */
 export default class TaskManagerTool extends WindowNWM
 {
     /** url for the CSS file */
     #href = "TaskManagerTool/TaskManagerTool.css";
+    /** title of the window */
     static title = TaskManagerToolText.title;
     text = TaskManagerToolText;
+    /** @type {MutationObserverInit} configuration of the observer */
     configObserver = {childList: true};
+    /** @type {MutationObserver} observer checking the add or delete of windows */
+    obs;
+    /** @type {HTMLTableSectionElement}  body of the table */
+    tbody;
+    /**
+     * Generate the task manager
+     */
     constructor()
     {
         super();
@@ -25,6 +37,9 @@ export default class TaskManagerTool extends WindowNWM
         super.disconnectedCallback();
         this.obs?.disconnect();
     }
+    /**
+     * Set observer for check if a new window appear or is deleted
+     */
     setTaskObserver()
     {
         const toolsContainer = document.querySelector(".tools-container");
@@ -33,7 +48,7 @@ export default class TaskManagerTool extends WindowNWM
         this.obs.observe(toolsContainer, this.configObserver);
     }
     /**
-     * 
+     * Generate or remove row in the task manager
      * @param {MutationRecord} mutations 
      */
     handleTaskObserver(mutations)
@@ -52,6 +67,9 @@ export default class TaskManagerTool extends WindowNWM
             }
         }
     }
+    /**
+     * Initialize HTML table for the task manager
+     */
     init()
     {
         this.setCSS(this.#href);
@@ -95,6 +113,10 @@ export default class TaskManagerTool extends WindowNWM
         managerContainer.append(table);
         this.container.append(managerContainer);
     }
+    /**
+     * Generate the html of a row in the task manager table depending of the id gave in parameter
+     * @param {string} toolId window's id
+     */
     generateRow(toolId)
     {
         const toolsList = this.getTaskManagerData()?.toolsList;
@@ -134,12 +156,20 @@ export default class TaskManagerTool extends WindowNWM
         tr.append(tdName, tdId, tdDisplay, tdReload, tdClose);
         this.tbody.append(tr);
     }
+    /**
+     * Remove a row from the task manager table depending of the id.
+     * @param {string} toolId window's id
+     */
     removeRow(toolId)
     {
         const row = this.tbody.querySelector(`.${toolId}`);
         if(!row) return;
         row.remove();
     }
+    /**
+     * Handle action to make on a window
+     * @param {PointerEvent|MouseEvent} e event from the click on a button of the task manager table
+     */
     handleToolAction(e)
     {
         const 
@@ -161,34 +191,6 @@ export default class TaskManagerTool extends WindowNWM
                 target.closeWindow();
                 break;
         }
-    }
-    handleToolDisplay(e)
-    {
-        const 
-            id = e.target.dataset.id,
-            /** @type {WindowNWM} tool selected by the manager */
-            target = document.querySelector(`#${id}`);
-        if(!target)return;
-        target.setPosition();
-        target.activeWindow();
-    }
-    handleToolReload(e)
-    {
-        const 
-            id = e.target.dataset.id,
-            /** @type {WindowNWM} tool selected by the manager */
-            target = document.querySelector(`#${id}`);
-        if(!target)return;
-        target.reloadWindow();
-    }
-    handleToolClose(e)
-    {
-        const 
-            id = e.target.dataset.id,
-            /** @type {WindowNWM} tool selected by the manager */
-            target = document.querySelector(`#${id}`);
-        if(!target)return;
-        target.closeWindow();
     }
 }
 customElements.define("nwm-task-manager", TaskManagerTool);

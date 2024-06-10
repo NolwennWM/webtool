@@ -55,7 +55,7 @@ export default class GridTool extends Tool
     settings;
     /**
      * prepare settings of the tool, generate title and HTML
-     * @param {object|undefined} settings 
+     * @param {object|undefined} settings old settings or nothing.
      */
     constructor(settings = undefined)
     {
@@ -70,7 +70,7 @@ export default class GridTool extends Tool
     connectedCallback()
     {
         super.connectedCallback();
-        if(!this.history)return;
+        // if(!this.history)return;
     }
     /**
      * Génère les éléments principaux du grid generator

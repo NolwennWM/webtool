@@ -15,7 +15,8 @@ Tool.setLocalStorageEvent();
 /* 
     TODO :
     - on ctrl + arrow move the window as windows arrow
-    - Ajouter worker
-    - finir le tutoriel
-    - ajouter un confirm optionnel à openOnce
+    - Ajouter worker ?
+    - switch between windows in header for mobile ?
+    - dark mode
+    - save language when selected and load it when no one is selected
 */

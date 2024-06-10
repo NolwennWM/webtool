@@ -5,6 +5,7 @@ import { TutorialToolText } from "./TutorialToolText.js";
 
 export default class TutorialTool extends WindowNWM
 {
+    #src = "TutorialTool/TutorialTool.css";
     static title = TutorialToolText.title;
     text = TutorialToolText;
     constructor()
@@ -34,7 +35,20 @@ export default class TutorialTool extends WindowNWM
     }
     init()
     {
-        this.container.append("Work In Progress");
+        this.setCSS(this.#src);
+
+        const tutorialContainer = document.createElement("div");
+        tutorialContainer.classList.add("tutorial-container");
+
+        for (const key in this.text.tutorial) 
+        {
+            const tutorialSection = document.createElement("section");
+            tutorialSection.classList.add("tutorial-section");
+            tutorialSection.innerHTML = this.getText(`tutorial.${key}`);
+            tutorialContainer.append(tutorialSection);
+        }
+        
+        this.container.append(tutorialContainer);
     }
 }
 customElements.define("nwm-tutorial-tool", TutorialTool);

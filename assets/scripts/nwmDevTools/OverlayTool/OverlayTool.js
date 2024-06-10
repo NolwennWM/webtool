@@ -7,15 +7,35 @@ import { OverlayToolText } from "./OverlayToolText.js";
  */
 export default class Overlay extends HTMLElement
 {
-    #href = "./assets/scripts/nwmDevTool/OverlayTool/OverlayTool.css";
+    /** Source for CSS file */
+    #src = "./assets/scripts/nwmDevTools/OverlayTool/OverlayTool.css";
+    /** text for overlay */
     #text = OverlayToolText;
+    /** Is HTML currently displayed */
     showHTML = false;
+    /** @type {HTMLButtonElement} button for change between HTML and CSS */
+    changeBTN;
+    /** @type {HTMLElement} code tag for display code */
+    code;
+    /** @type {{copy: string, display: string}}  CSS code to display and copy*/
+    CSS;
+    /** @type {{copy: string, display: string}}  HTML code to display and copy*/
+    HTML;
+    /** @type {string} code to copy on click */
+    copy;
+    /**
+     * Set and display overlay for show tool code.
+     * @param {string} lang current lang for the overlay 
+     */
     constructor(lang)
     {
         super();
         this.lang = lang;
         this.#init();
     }
+    /**
+     * Initialize HTML and CSS for overlay
+     */
     #init()
     {
         this.attachShadow({mode:"open"});
@@ -23,7 +43,7 @@ export default class Overlay extends HTMLElement
 
         const style = document.createElement("link");
         style.rel = "stylesheet";
-        style.href = this.#href;
+        style.href = this.#src;
 
         this.shadowRoot.prepend(style);
         const displayBlock = document.createElement("div");
@@ -57,30 +77,13 @@ export default class Overlay extends HTMLElement
 
 
 
-        copy.addEventListener("click", ()=>
-        {
-            navigator.clipboard.writeText(this.copy);
-            copy.textContent = this.#text.display.copied[this.lang];
-            setTimeout(() => {
-                copy.textContent = this.#text.display.copy[this.lang];
-                
-            }, 2000);
-        });
-        changeCode.addEventListener("click", ()=>{
-            if(this.showHTML)
-            {
-                changeCode.textContent = this.#text.display.html[this.lang];
-                this.displayCSS();
-            }
-            else
-            {
-                changeCode.textContent = this.#text.display.css[this.lang];
-                this.displayHTML();
-            }
-            this.showHTML = !this.showHTML;
-        });
+        copy.addEventListener("click", ()=>this.copyCode(copy));
+        changeCode.addEventListener("click", ()=>this.changeCode(changeCode));
         close.addEventListener("click", ()=>this.remove());
     }
+    /**
+     * set CSS property if available otherwise display error in console
+     */
     set setCSS(content)
     {
         if(!content.copy || !content.display)
@@ -90,6 +93,9 @@ export default class Overlay extends HTMLElement
         }
         this.CSS = content;
     }
+    /**
+     * set HTML property if available otherwise display error in console
+     */
     set setHTML(content)
     {
         if(!content.copy || !content.display)
@@ -99,16 +105,57 @@ export default class Overlay extends HTMLElement
         }
         this.HTML = content;
     }
+    /**
+     * Copy current code in the clipboard.
+     * @param {HTMLButtonElement} copyBTN copy button
+     */
+    copyCode(copyBTN)
+    {
+        navigator.clipboard.writeText(this.copy);
+        copyBTN.textContent = this.#text.display.copied[this.lang];
+        setTimeout(() => {
+            copyBTN.textContent = this.#text.display.copy[this.lang];
+            
+        }, 2000);
+    }
+    /**
+     * Change code between CSS and HTML
+     * @param {HTMLButtonElement} copyBTN change code button
+     */
+    changeCode(changeBTN)
+    {
+        if(this.showHTML)
+        {
+            changeBTN.textContent = this.#text.display.html[this.lang];
+            this.displayCSS();
+        }
+        else
+        {
+            changeBTN.textContent = this.#text.display.css[this.lang];
+            this.displayHTML();
+        }
+        this.showHTML = !this.showHTML;
+    }
+    /**
+     * Display CSS code.
+     */
     displayCSS()
     {
         this.code.innerHTML = this.CSS.display;
         this.copy = this.CSS.copy;
     }
+    /**
+     * Display HTML code.
+     */
     displayHTML()
     {
         this.code.innerHTML = this.HTML.display;
         this.copy = this.HTML.copy;
     }
+    /**
+     * Display CSS if available otherwise display HTML.
+     * If both are available CSS is displayed and button for change is visible.
+     */
     displayCode()
     {
         if(this.CSS)

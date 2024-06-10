@@ -10,6 +10,8 @@ export default class DevToolsHandler
     tools = {};
     /** languages available for the app */
     langs = DevToolsHandlerText.langs;
+    /** title of the application */
+    title = DevToolsHandlerText.title;
     /** text for the search input */
     searchLangs = DevToolsHandlerText.searchLangs;
     /** navigation of the app */
@@ -30,6 +32,7 @@ export default class DevToolsHandler
         document.addEventListener("DOMContentLoaded", this.disableLoader.bind(this));
         this.generateMenu();
         this.handleTutorial();
+        this.titleLanguage();
     }
     /**
      * handle the first appearence of the tutorial.
@@ -38,6 +41,15 @@ export default class DevToolsHandler
     {
         if(!this.tools.TutorialTool)return;
         this.tools.TutorialTool.firstTime(this.container);
+    }
+    /**
+     * Select title for the current language
+     */
+    titleLanguage()
+    {
+        const title = document.querySelector(".main-title");
+        if(!title)return;
+        title.textContent = this.title[document.documentElement.lang]??this.title.en;
     }
     /**
      * Generate Navigation Menu

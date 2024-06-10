@@ -226,4 +226,5 @@ export default class Tool extends WindowNWM
      * Have to be overided.
      */
     setToolElements(){}
+    
 }

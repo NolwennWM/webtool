@@ -4,15 +4,23 @@ import Tool from "../Tool/Tool.js";
 import { ShadowToolText } from "./ShadowToolText.js";
 
 
-
+/**
+ * Generate box shadows or text shadows
+ */
 export default class ShadowTool extends Tool
 {
+    /** Title of the application */
     static title = ShadowToolText.title;
     text = ShadowToolText;
+    /** list of shadows values */
     shadows = [];
-    #href = "ShadowTool/ShadowTool.css"
+    /** source of CSS file */
+    #href = "ShadowTool/ShadowTool.css";
+    /** Regex for hexadecimal color */
     colorRegex = /^#[\da-fA-F]{3,6}$/;
+    /** the app is it in text shadow mode */
     isTextShadow = false;
+    /** Default values for shadows */
     defaultShadow = {
         offsetX: 5,
         offsetY: 5,
@@ -22,6 +30,7 @@ export default class ShadowTool extends Tool
         opacity: 1,
         inset: false
     };
+    /** List of inputs for each shadows form */
     formInfo = [
         {type: "number", name: "offsetX", min: -50, max:50, value: this.defaultShadow.offsetX, event:this.#setProperty.bind(this)},
         {type: "number", name: "offsetY", min: -50, max:50, value: this.defaultShadow.offsetY, event:this.#setProperty.bind(this)},
@@ -31,7 +40,20 @@ export default class ShadowTool extends Tool
         {type: "number", name: "opacity", min:0, max:1, step: 0.1,  value:this.defaultShadow.opacity, event:this.#setProperty.bind(this)},
         {type: "checkbox", name: "inset", event:this.#setInset.bind(this), checked: this.defaultShadow.inset},
     ];
+    /** number of current shadows */
     nbShadow = 0;
+    /** @type {object|undefined} settings of the app */
+    settings;
+    /** @type {HTMLDivElement} target for shadow's example */
+    target;
+    /** @type {HTMLInputElement} input able to modify text example */
+    textExample;
+    /** @type {string} current value for shadow property */
+    shadowProperty;
+    /**
+     * Initialize shadow tool
+     * @param {object|undefined} settings old settings or nothing.
+     */
     constructor(settings = undefined)
     {
         super();
@@ -46,8 +68,11 @@ export default class ShadowTool extends Tool
     connectedCallback()
     {
         super.connectedCallback();
-        if(!this.history)return;
+        // if(!this.history)return;
     }
+    /**
+     * Initialize HTML and CSS of the tool
+     */
     #init()
     {
         this.setCSS(this.#href);
@@ -58,6 +83,9 @@ export default class ShadowTool extends Tool
         this.#generateTarget();
         this.#generateShadow();
     }
+    /**
+     * Generate example target for shadows
+     */
     #generateTarget()
     {
         this.target?.remove();
@@ -75,6 +103,9 @@ export default class ShadowTool extends Tool
         this.display.append(target);
         this.#updateShadow();
     }
+    /**
+     * Generate commons buttons
+     */
     #createForm()
     {
         const btnAdd = document.createElement("button");
@@ -101,6 +132,9 @@ export default class ShadowTool extends Tool
 
         this.generateCodeButton(this.display, this.#getCode);
     }
+    /**
+     * Generate a shadow form 
+     */
     #generateShadow()
     {
         const formContainer = this.form;
@@ -137,11 +171,20 @@ export default class ShadowTool extends Tool
 
         this.#updateShadow();
     }
+    /**
+     * Return the data-id of the shadow form parent of the selected element.
+     * @param {HTMLElement} target element in a shadow form
+     * @returns {string} data-id of the shadow
+     */
     #getId(target)
     {
         const shadow = target.closest(".shadow-set");
         return shadow.dataset.id;
     }
+    /**
+     * Save inputs change of the shadow form before launch example's update.
+     * @param {InputEvent} e Input event of the shadow form
+     */
     #setProperty(e)
     {
         const  
@@ -154,12 +197,19 @@ export default class ShadowTool extends Tool
 
         this.#updateShadow();
     }
+    /**
+     * Save value of the inset checkbox before launch example's update
+     * @param {InputEvent} e Input Event for inset
+     */
     #setInset(e)
     {
         const id = this.#getId(e.target);
         this.shadows[id][e.target.name] = e.target.checked;
         this.#updateShadow();
     }
+    /**
+     * Update example's shadow
+     */
     #updateShadow()
     {
         let shadow = "\r\t\t";
@@ -184,7 +234,10 @@ export default class ShadowTool extends Tool
         else this.target.style.boxShadow = shadow;  
              
     } 
-
+    /**
+     * Delete selected shadow form then launch example's update
+     * @param {MouseEvent|PointerEvent} e Click Event on the delete shadow button 
+     */
     #deleteShadow(e)
     {
         const id = this.#getId(e.target);
@@ -192,6 +245,9 @@ export default class ShadowTool extends Tool
         e.target.closest(".shadow-set")?.remove();
         this.#updateShadow();
     }
+    /**
+     * Delete all shadows
+     */
     #deleteShadows()
     {
         this.shadows = [];
@@ -202,6 +258,10 @@ export default class ShadowTool extends Tool
             shadow.remove();    
         }
     }
+    /**
+     * Change text-shadow to box-shadow and vice versa.
+     * @param {MouseEvent|PointerEvent} e Click event on the change shadow type button
+     */
     #switchShadow(e)
     {
         this.isTextShadow = !this.isTextShadow;
@@ -219,17 +279,27 @@ export default class ShadowTool extends Tool
         this.#generateTarget();
         this.#generateShadow();
     }
-    #setExampleText(e)
+    /**
+     * Change text of the text example.
+     */
+    #setExampleText()
     {
         if(!this.textExample.value)return;
         this.target.textContent = this.textExample.value;
     }
+    /**
+     * Display overlay with CSS code.
+     */
     #getCode()
     {
         const overlay = this.generateOverlay();
         overlay.setCSS = this.#getCSS();
         overlay.displayCSS();
     }
+    /**
+     * Get CSS of the shadow.
+     * @returns {object} object containing CSS to display and CSS to copy
+     */
     #getCSS()
     {
         const shadow = this.isTextShadow?"text-shadow":"box-shadow";
@@ -237,16 +307,26 @@ export default class ShadowTool extends Tool
         let copyCode = `.target\r{\r\t${shadow}: ${this.shadowProperty};\r}`;
         return {display: displayCode, copy: copyCode}
     }
+    /**
+     * Return settings of the app that have to be saved.
+     * @returns {object} settings of the app to save
+     */
     getToolSettings()
     {
         const tool = {isTextShadow: this.isTextShadow, shadows: this.shadows}
         return tool;
     }
+    /**
+     * Set tool settings before initialization.
+     */
     setToolSettings()
     {
         if(!this.settings)return;
         this.isTextShadow = this.settings.isTextShadow;
     }
+    /**
+     * Set tool forms.
+     */
     setToolElements()
     {
         if(!this.settings)return;
