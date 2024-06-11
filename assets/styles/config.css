@@ -1,0 +1,35 @@
+html
+{
+    /* body */
+    --bg-color: #faebd7;
+    --text-color: #292929;
+    /* menu */
+    --bg-color-menu: #faebd7;
+    --bg-gradient-menu-btn: linear-gradient(145deg, #fffbe6, #e1d4c2);
+    --shadow-menu-btn:   7px 2px 20px #d5c8b7, -7px -2px 20px #fffff7;
+    /* window */
+    --bg-color-window-header: #c0c0c0;
+    --text-color-window-header: #faebd7;
+    --bg-color-window-body: #faebd7;
+}
+html[data-theme="dark"]
+{
+    /* body */
+    --bg-color: #292929;
+    --text-color: #faebd7;
+    /* menu */
+    --bg-color-menu: #25343a;
+    --bg-gradient-menu-btn: linear-gradient(145deg, #141412, #36332f);
+    --shadow-menu-btn:   7px 2px 20px #312e2a, -7px -2px 20px #1d292e;
+    /* window */
+    --bg-color-window-header: #1f1e25;
+    --text-color-window-header: #faebd7;
+    --bg-color-window-body: #292929;
+}
+@media (prefers-color-scheme: dark) 
+{
+    html:not([data-theme])
+    {
+        --bg-color: #292929;
+    }
+}

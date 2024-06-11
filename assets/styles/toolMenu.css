@@ -1,5 +1,7 @@
+
 .navigation-container
 {
+    color: var(--text-color);
     display: grid;
     grid-template-rows: 1fr auto auto;
     height: 100%;
@@ -13,17 +15,17 @@
             list-style: none;
             & button
             {
+                color: inherit;
                 padding: 5px;
                 cursor: pointer;
                 margin-bottom: 10px;
                 border-radius: 10px;
-                background: linear-gradient(145deg, #fffbe6, #e1d4c2);
-                box-shadow:  7px 2px 20px #d5c8b7,
-                            -7px -2px 20px #fffff7;
+                background: var(--bg-gradient-menu-btn, linear-gradient(145deg, #fffbe6, #e1d4c2));
+                box-shadow:  var(--shadow-menu-btn, 7px 2px 20px #d5c8b7, -7px -2px 20px #fffff7);
     
                 &:hover
                 {
-                    background: #faebd7;
+                    background: var(--bg-color);
                 }
                 &:active
                 {

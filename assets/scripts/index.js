@@ -6,17 +6,23 @@ import Tool from "./nwmDevTools/Tool/Tool.js";
 import BurgerMenu from "./BurgerMenu/BurgerMenu.js";
 import TaskManagerTool from "./nwmDevTools/TaskManagerTool/TaskManagerTool.js";
 
-const tools = {GridTool, ShadowTool,TaskManagerTool, TutorialTool};
+try
+{
+    const tools = {GridTool, ShadowTool,TaskManagerTool, TutorialTool};
 
-const handler = new DevToolsHandler(tools);
+    const handler = new DevToolsHandler(tools);
 
-Tool.getLocalStorageTools(handler.container, tools);
-Tool.setLocalStorageEvent();
+    Tool.getLocalStorageTools(handler.container, tools);
+    Tool.setLocalStorageEvent();
+}catch(e)
+{
+    console.error(e);
+}
+
 /* 
     TODO :
     - on ctrl + arrow move the window as windows arrow
     - Ajouter worker ?
     - switch between windows in header for mobile ?
     - dark mode
-    - save language when selected and load it when no one is selected
 */

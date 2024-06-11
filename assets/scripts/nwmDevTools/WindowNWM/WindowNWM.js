@@ -13,8 +13,10 @@ export default class WindowNWM extends HTMLElement
 {
     /** class of the window HTML Element */
     static windowClass = "nwm-window";
-    /** Key for local storage settings */
-    localStorageSettings = "devToolsSettings";
+    /** Key for local storage settings as static property*/
+    static storageSettingsKey = "devToolsSettings";
+    /** Key for local storage settings as property*/
+    storageSettingsKey = this.constructor.storageSettingsKey;
     /** Name for task manager */
     taskManagerName = "devToolsNWM";
     /** Name for task manager property */
@@ -54,7 +56,7 @@ export default class WindowNWM extends HTMLElement
         super();
         this.#events.movingWindow = this.#movingWindow.bind(this);
         this.#events.endMoveWindow = this.#endMoveWindow.bind(this);
-
+        console.log(this.storageSettingsKey);
         this.chooseLanguage();
         this.#init();
     }

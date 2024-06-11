@@ -6,7 +6,6 @@
 }
 :host
 {
-    --header-bg-color: rgb(192, 192, 192);
     --header-height: 2em;
     --header-padding: 5px;
     --border-size: 5px;
@@ -24,7 +23,7 @@
     grid-template-rows: auto 1fr;
     overflow: hidden;
     transition: max-height .3s linear, max-width .3s linear;
-    background-color: antiquewhite;
+    background-color: var(--bg-color-window-body, antiquewhite);
     aspect-ratio: 1/1;
     resize:none;
     position: absolute;
@@ -41,7 +40,7 @@
 
 .window-header
 {
-    background-color: var(--header-bg-color);
+    background-color: var(--bg-color-window-header, #c0c0c0);
     text-align: center;
     cursor: grab;
     height: var(--header-height-total);
@@ -70,6 +69,7 @@
         height: 33px;
         & .btn
         {
+            color: inherit;
             display: inline-block;
             width: 33px;
             height: inherit;

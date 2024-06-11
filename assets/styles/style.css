@@ -1,3 +1,4 @@
+@import url("./config.css");
 *[class], ::before, ::after
 {
     margin: 0;
@@ -8,6 +9,8 @@ body
 {
     height: 100dvh;
     overflow: hidden;
+    background-color: var(--bg-color);
+    color: var(--text-color);
 }
 .tools-header
 {
@@ -33,8 +36,8 @@ body
     left: 0;
     right: 0;
     z-index: 50;
-    transition: opacity 0.5s linear;
-    background-color: antiquewhite;
+    transition: opacity 0.5s linear, background-color 0.5s linear;
+    background-color: var(--bg-color);
     display: flex;
     justify-content: center;
     align-items: center;

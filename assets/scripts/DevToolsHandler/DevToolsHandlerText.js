@@ -1,5 +1,11 @@
 export const DevToolsHandlerText = {
-    langs: {fr:"Français", en:"English"},
     title: {fr: "Outils du Développeur NWM", en: "NWM Developper's Tools"},
-    searchLangs: {fr: "Rechercher un Outil", en: "Search a Tool"}
+    langsLabel: {fr: "Selection de Langue", en: "Lang Selection"},
+    langs: {fr:"Français", en:"English"},
+    search: {fr: "Rechercher un Outil", en: "Search a Tool"},
+    themeLabel: {fr: "Selection de Thème", en: "Theme Selection"},
+    themeSelect: {
+        light: {fr: "Clair", en: "Light"},
+        dark: {fr: "Sombre", en: "Dark"},
+    }
 }
