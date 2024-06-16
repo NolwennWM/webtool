@@ -198,7 +198,7 @@ export default class Tool extends WindowNWM
                 /** @type {Tool} HTML Element containing the display of the tool */
                 const t = new tool(oldTool.settings);
                 t.id = idTool;
-                t.style.cssText = oldTool.style;
+                if(!t.isOnTouchScreen)t.style.cssText = oldTool.style;
                 t.classList.toggle("open", oldTool.open)
                 t.history = oldTool.history??undefined;
                 parent.append(t);

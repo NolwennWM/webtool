@@ -37,7 +37,13 @@
     max-width: 100dvw;
     resize:both;
 }
-
+@media screen and (pointer: coarse) 
+{
+    :host(.open)
+    {
+        resize:none;
+    }
+}
 .window-header
 {
     background-color: var(--bg-color-window-header, #c0c0c0);

@@ -32,6 +32,8 @@ export default class WindowNWM extends HTMLElement
         top : "10dvh",
         left : "10dvw"
     };
+    /** Verify if the main cursor is a touch screen */
+    isOnTouchScreen = window.matchMedia("(pointer: coarse)").matches;
     /** Text of the windows */
     text = WindowNWMText;
     /** @type {HTMLElement} HTML Element containing the title of the window */
@@ -56,7 +58,7 @@ export default class WindowNWM extends HTMLElement
         super();
         this.#events.movingWindow = this.#movingWindow.bind(this);
         this.#events.endMoveWindow = this.#endMoveWindow.bind(this);
-        console.log(this.storageSettingsKey);
+        
         this.chooseLanguage();
         this.#init();
     }
@@ -79,9 +81,9 @@ export default class WindowNWM extends HTMLElement
 
         const header = document.createElement("div");
         header.classList.add("window-header");
-        header.addEventListener("pointerdown", this.#startMoveWindow.bind(this));
         this.header = header;
-
+        if(!this.isOnTouchScreen) header.addEventListener("pointerdown", this.#startMoveWindow.bind(this));
+            
         const btnsHeader = document.createElement("div")
         btnsHeader.classList.add("btns-container")
 
@@ -99,7 +101,7 @@ export default class WindowNWM extends HTMLElement
         toggleBTN.classList.add("toggle", "btn");
         toggleBTN.innerHTML = "&#x23AF;";
         toggleBTN.title = this.getText("buttons.minimize");
-        toggleBTN.addEventListener("pointerup", this.#toggleWindow.bind(this));
+        toggleBTN.addEventListener("pointerup", this.#handleToggleWindow.bind(this));
 
         const fsBTN = document.createElement("button");
         fsBTN.classList.add("fullscreen", "btn");
@@ -127,7 +129,7 @@ export default class WindowNWM extends HTMLElement
      */
     connectedCallback()
     {
-        document.addEventListener("pointerup", this.#events.endMoveWindow);
+        if(!this.isOnTouchScreen) document.addEventListener("pointerup", this.#events.endMoveWindow);
         this.info.innerHTML = this.getText("info");
         if(!this.style.top) this.setPosition();
         this.addToTaskManager();
@@ -137,8 +139,9 @@ export default class WindowNWM extends HTMLElement
      */
     disconnectedCallback()
     {
-        document.removeEventListener("pointerup", this.#events.endMoveWindow);
+        if(!this.isOnTouchScreen) document.removeEventListener("pointerup", this.#events.endMoveWindow);
         this.removeFromTaskManager();
+        window.activeNWMWindow = undefined;
     }
     /**
      * If the window is opened two times, the second is canceled and the first put as active.
@@ -228,13 +231,21 @@ export default class WindowNWM extends HTMLElement
         this.#title.textContent = title;
     }
     /**
-     * expand or close the window.
+     * handle click on toggle window
      * @param {PointerEvent|MouseEvent} e Pointer or mouse Event
      */
-    #toggleWindow(e)
+    #handleToggleWindow(e)
     {
         if(e.target.classList.contains(".close")) return;
-        this.classList.toggle("open");
+        this.#toggleWindow();
+    }
+    /**
+     * expand or close the window.
+     * @param {boolean|undefined} force 
+     */
+    #toggleWindow(force = undefined)
+    {
+        this.classList.toggle("open", force);
     }
     /**
      * Toggle the fullscreen of the window
@@ -293,8 +304,9 @@ export default class WindowNWM extends HTMLElement
     }
     /**
      * put the last clicked window over the others
+     * @param {boolean|undefined} forceToggle force Window to Open if reduced
      */
-    activeWindow()
+    activeWindow(forceToggle = undefined)
     {
         if(window.activeNWMWindow === this) return;
         if(window.activeNWMWindow)
@@ -302,8 +314,8 @@ export default class WindowNWM extends HTMLElement
             window.activeNWMWindow.style.zIndex = "";
         }
         this.style.zIndex = 10;
+        if(forceToggle)this.#toggleWindow(true);
         window.activeNWMWindow = this;
-
     }
     /**
      * Move the window

@@ -62,3 +62,47 @@ body
         width: 100%;
     }
 }
+.btn.swap-btn
+{
+    display: block;
+    height: 20dvh;
+    position: fixed;
+    top: 50%;
+    translate: 0 -50%;
+    font-size: 2em;
+    z-index: 12;
+    &.next-btn
+    {
+        right: 5px;
+    }
+    &.previous-btn
+    {
+        left: 5px;
+    }
+}
+.dot-container
+{
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    width: 90dvw;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    position: fixed;
+    bottom: 2dvh;
+    left: 50%;
+    translate: -50% 0;
+    & .btn.dot-btn
+    {
+        display: inline-block;
+        height: 30px;
+        width: 30px;
+        min-width: 30px;
+        border-radius: 50%;
+        opacity: .5;
+        &.active
+        {
+            opacity: 1;
+        }
+    }
+}

@@ -49,7 +49,7 @@ export default class TaskManagerTool extends WindowNWM
     }
     /**
      * Generate or remove row in the task manager
-     * @param {MutationRecord} mutations 
+     * @param {MutationRecord[]} mutations 
      */
     handleTaskObserver(mutations)
     {
@@ -182,7 +182,7 @@ export default class TaskManagerTool extends WindowNWM
         {
             case "display": 
                 target.setPosition();
-                target.activeWindow();
+                target.activeWindow(true);
                 break;
             case "reload": 
                 target.reloadWindow();

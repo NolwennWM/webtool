@@ -23,6 +23,7 @@ try
     TODO :
     - on ctrl + arrow move the window as windows arrow
     - Ajouter worker ?
-    - switch between windows in header for mobile ?
-    - dark mode
+    - add logo for each tool to add in dot (next and previous too?)
+    - improve selection of block in touchscreen grid generator
+    - add interface explanation of mobile version to tutorial.
 */
