@@ -12,6 +12,10 @@ export default class GridTool extends Tool
     columns = 2;
     /** default numbers of rows */
     rows = 2;
+    /** number max of columns */
+    columnsMax = 20;
+    /** number max of rows */
+    rowsMax = 20;
     /** default size of the rows and columns */
     defaultSize = "1fr";
     /** numbers of colors set in the css for children */
@@ -22,8 +26,8 @@ export default class GridTool extends Tool
     text = GridToolText;
     /** list of inputs in the form */
     formInfo = [
-        {type:"number",name:"columns", id:"columns",min:0, max:20, value:this.columns, event:this.#setGrid.bind(this)},
-        {type:"number",name:"rows", id:"rows",min:0, max:20, value:this.rows, event:this.#setGrid.bind(this)},
+        {type:"number",name:"columns", id:"columns",min:0, max:this.columnsMax, value:this.columns, event:this.#setGrid.bind(this)},
+        {type:"number",name:"rows", id:"rows",min:0, max:this.rowsMax, value:this.rows, event:this.#setGrid.bind(this)},
         {type:"number",name:"columnGap", id:"columnGap",min:0, max:50, value:0, event:this.#setGrid.bind(this)},
         {type:"number",name:"rowGap", id:"rowGap",min:0, max:50, value:0, event:this.#setGrid.bind(this)},
     ];
@@ -124,13 +128,20 @@ export default class GridTool extends Tool
         /** @type {string}*/
         let current = e.target.name;
 
-        const nb = parseInt(e.target.value);
-        if(nb<0) return;
+        let nb = parseInt(e.target.value);
+        if(!nb || nb<0) nb = 0;
         
         switch(current)
         {
             case "columns":
             case "rows":
+                const max = this[`${current}Max`];
+                if(nb>max)nb = max;
+                let diff = nb - this[current];
+                this[current] = nb;
+                this.#createDivs();
+                this.#setTemplate(diff, current);
+                this.#setSizes(current);
                 break;
             case "rowGap":
             case "columnGap":
@@ -140,11 +151,6 @@ export default class GridTool extends Tool
                 console.error(this.getText("error.input"));
                 return;
         }
-        let diff = nb - this[current];
-        this[current] = nb;
-        this.#createDivs();
-        this.#setTemplate(diff, current);
-        this.#setSizes(current);
     }
     /**
      * set the gap of the grid
@@ -188,7 +194,10 @@ export default class GridTool extends Tool
         else
         {
             this[target+"Sizes"].splice(diff, diff*-1);
-            form.children[--this[target+"Id"]].remove();
+            for(let i = 0; i>diff; i--)
+            {
+                form.children[form.children.length-1]?.remove();
+            }
         }
     }
     /**
