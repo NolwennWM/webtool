@@ -1,6 +1,6 @@
 "use strict";
 
-import { WindowNWMText } from "./WindowNWMText.js";
+import { AbstractWindowText } from "./AbstractWindowText.js";
 
 // interessant mais pas géré par firefox TODO : quand géré mettre text en voir config en json
 // import * as text from "./test.json" with {type: "json"}; 
@@ -9,10 +9,12 @@ import { WindowNWMText } from "./WindowNWMText.js";
 /**
  * HTML custom element for a window
  */
-export default class WindowNWM extends HTMLElement
+export default class AbstractWindow extends HTMLElement
 {
     /** class of the window HTML Element */
     static windowClass = "nwm-window";
+    /** path for the folder of the tools */
+    static href = "./assets/scripts/nwmDevTools/";
     /** Key for local storage settings as static property*/
     static storageSettingsKey = "devToolsSettings";
     /** Key for local storage settings as property*/
@@ -21,8 +23,6 @@ export default class WindowNWM extends HTMLElement
     taskManagerName = "devToolsNWM";
     /** Name for task manager property */
     taskManagerProperty = "_taskManager";
-    /** path for the folder of the tools */
-    #href = "./assets/scripts/nwmDevTools/";
     /** default language of the window */
     lang = "fr";
     /** default position of the window */
@@ -35,7 +35,7 @@ export default class WindowNWM extends HTMLElement
     /** Verify if the main cursor is a touch screen */
     isOnTouchScreen = window.matchMedia("(pointer: coarse)").matches;
     /** Text of the windows */
-    text = WindowNWMText;
+    text = AbstractWindowText;
     /** @type {HTMLElement} HTML Element containing the title of the window */
     #title;
     /** list of functions binded for event listeners */
@@ -56,6 +56,7 @@ export default class WindowNWM extends HTMLElement
     constructor()
     {
         super();
+        
         this.#events.movingWindow = this.#movingWindow.bind(this);
         this.#events.endMoveWindow = this.#endMoveWindow.bind(this);
         
@@ -67,11 +68,12 @@ export default class WindowNWM extends HTMLElement
      */
     #init()
     {
+        const name = this.constructor.name;
         this.attachShadow({mode:"open"});
 
-        this.setCSS("WindowNWM/WindowNWM.css");
+        this.#setFullCSS(this.constructor);
 
-        this.classList.add("open", this.constructor.windowClass, this.constructor.name);
+        this.classList.add("open", this.constructor.windowClass, name);
         this.addEventListener("pointerdown", this.activeWindow.bind(this));
         this.activeWindow();
         this.#generateID();
@@ -116,13 +118,29 @@ export default class WindowNWM extends HTMLElement
         infoBTN.addEventListener("pointerup", this.#toggleInfo.bind(this));
 
         this.#title = document.createElement("h2");
+        this.setTitle();
+
+        const logo = this.constructor.getLogo();
 
         btnsHeader.append(infoBTN, toggleBTN, fsBTN, closeBTN)
-        header.append(this.#title, btnsHeader);
+        header.append(logo, this.#title, btnsHeader);
         this.container.append(infoDisplay);
 
         this.shadowRoot.append(header, this.container);
         
+    }
+    static getLogo()
+    {
+        const name = this.name;
+        const logo = document.createElement("img");
+        logo.alt = "logo " + this.getTitle;
+        logo.src = `${this.href}${name}/${name}.svg`;
+        logo.classList.add("logo");
+        return logo;
+    }
+    static get getTitle()
+    {
+        return this.title?this.title[document.documentElement.lang]??"no title":"no title";
     }
     /**
      * LifeCycle called if the window is added to DOM
@@ -213,22 +231,40 @@ export default class WindowNWM extends HTMLElement
     {
         const style = document.createElement("link");
         style.rel = "stylesheet";
-        style.href = this.#href+href;
+        style.href = this.constructor.href+href;
         if(!this.lastStyle)
         {
-            this.shadowRoot.prepend(style);
+            this.shadowRoot.append(style);
             this.lastStyle = style;
             return;
         }
         this.lastStyle.after(style);
     }
     /**
-     * set the title of the window.
-     * @param {string} title title of the window
+     * Take the inheriting class and add CSS files with the same name
+     * Then do the same with the inherited classes until find this class.
+     * @param {class} constructor class of the current object
      */
-    setTitle(title)
+    #setFullCSS(constructor)
     {
-        this.#title.textContent = title;
+        
+        const 
+            parent = Object.getPrototypeOf(constructor),
+            name = constructor.name;
+        
+        this.setCSS(`${name}/${name}.css`);
+
+        if(constructor.name === "AbstractWindow")return;
+
+        this.#setFullCSS(parent);
+    }
+    /**
+     * set the title of the window.
+     */
+    setTitle()
+    {
+        const title = this.constructor.title;
+        if(title) this.#title.textContent = title[this.lang];
     }
     /**
      * handle click on toggle window
@@ -371,4 +407,4 @@ export default class WindowNWM extends HTMLElement
         this.lang = lang;
     }
 }
-customElements.define("nwm-window", WindowNWM);
+customElements.define("nwm-window", AbstractWindow);

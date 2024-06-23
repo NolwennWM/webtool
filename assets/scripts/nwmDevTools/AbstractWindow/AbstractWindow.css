@@ -51,7 +51,7 @@
     cursor: grab;
     height: var(--header-height-total);
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 50px 1fr auto;
     align-items: center;
     padding: 5px;
     padding-top: 0;
@@ -60,6 +60,11 @@
     :host(.moving) &
     {
         cursor: grabbing;
+    }
+    & .logo
+    {
+        width: 40px;
+        height: 40px;
     }
     & h2
     {

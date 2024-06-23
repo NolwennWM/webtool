@@ -1,15 +1,13 @@
 "use strict";
 
-import WindowNWM from "../WindowNWM/WindowNWM.js";
-import { TutorialToolText } from "./TutorialToolText.js";
+import AbstractWindow from "../AbstractWindow/AbstractWindow.js";
+import { TutorialToolText } from "./WindowTutorialText.js";
 
 /**
  * Tutorial about this application
  */
-export default class TutorialTool extends WindowNWM
+export default class WindowTutorial extends AbstractWindow
 {
-    /** source of CSS file */
-    #src = "TutorialTool/TutorialTool.css";
     /** Title of this application */
     static title = TutorialToolText.title;
     /** Tutorial's text */
@@ -20,8 +18,6 @@ export default class TutorialTool extends WindowNWM
     constructor()
     {
         super();
-        
-        this.setTitle(this.getText("title"));
         this.init();
     }
     connectedCallback()
@@ -57,13 +53,12 @@ export default class TutorialTool extends WindowNWM
      */
     init()
     {
-        this.setCSS(this.#src);
-
         const tutorialContainer = document.createElement("div");
         tutorialContainer.classList.add("tutorial-container");
 
         for (const key in this.text.tutorial) 
         {
+            if((this.isOnTouchScreen && key.includes("desktop")) ||(!this.isOnTouchScreen && key.includes("touchscreen")))continue;
             const tutorialSection = document.createElement("section");
             tutorialSection.classList.add("tutorial-section");
             tutorialSection.innerHTML = this.getText(`tutorial.${key}`);
@@ -73,4 +68,4 @@ export default class TutorialTool extends WindowNWM
         this.container.append(tutorialContainer);
     }
 }
-customElements.define("nwm-tutorial-tool", TutorialTool);
+customElements.define("nwm-tutorial-tool", WindowTutorial);

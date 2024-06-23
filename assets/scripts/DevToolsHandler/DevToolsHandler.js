@@ -1,6 +1,6 @@
 "use strict";
 
-import WindowNWM from "../nwmDevTools/WindowNWM/WindowNWM.js";
+import AbstractWindow from "../nwmDevTools/AbstractWindow/AbstractWindow.js";
 import { DevToolsHandlerText } from "./DevToolsHandlerText.js";
 /**
  * Handle the working flow of the app
@@ -60,8 +60,8 @@ export default class DevToolsHandler
      */
     handleTutorial()
     {
-        if(!this.tools.TutorialTool)return;
-        this.tools.TutorialTool.firstTime(this.container);
+        if(!this.tools.WindowTutorial)return;
+        this.tools.WindowTutorial.firstTime(this.container);
     }
     /**
      * Select title for the current language
@@ -81,11 +81,13 @@ export default class DevToolsHandler
 
         const prevBtn = document.createElement("button");
         prevBtn.textContent = "<";
+        prevBtn.disabled = true;
         prevBtn.classList.add("btn", "previous-btn", "swap-btn");
         prevBtn.addEventListener("click",this.handleSwapApp.bind(this));
 
         const nextBtn = document.createElement("button");
         nextBtn.textContent = ">";
+        nextBtn.disabled = true;
         nextBtn.classList.add("btn", "next-btn", "swap-btn");
         nextBtn.addEventListener("click",this.handleSwapApp.bind(this));
 
@@ -113,7 +115,7 @@ export default class DevToolsHandler
         this.nextSwap = time + this.delay;
         /** @type {HTMLElement} current active app */
         const current = window.activeNWMWindow;
-        /** @type {WindowNWM} next or previous app */
+        /** @type {AbstractWindow} next or previous app */
         let newCurrent;
         if(e.target.classList.contains("next-btn"))
         {
@@ -132,7 +134,7 @@ export default class DevToolsHandler
     /**
      * Select the app at the parameter index.
      * @param {number} index index of the wanted children (negative enabled)
-     * @returns {WindowNWM|undefined} app at this index 
+     * @returns {AbstractWindow|undefined} app at this index 
      */
     getToolContainerChild(index)
     {
@@ -155,6 +157,8 @@ export default class DevToolsHandler
                 const dot = document.createElement("button");
                 dot.classList.add("btn", "dot-btn");
                 dot.dataset.id = added.id;
+                const logo = added.constructor.getLogo();
+                dot.append(logo);
                 if(added === window.activeNWMWindow) this.toggleActiveDot(dot);
 
                 dot.addEventListener("click", this.handleDotEvent.bind(this));
@@ -188,11 +192,14 @@ export default class DevToolsHandler
      */
     handleDotEvent(e)
     {
-        const id = e.target.dataset.id
+        const dot = e.target.classList.contains("btn")? e.target: e.target.closest(".btn");
+        console.log(dot);
+        if(!dot)return;
+        const id = dot.dataset.id;
         if(!id)return
         const tool = this.container.querySelector(`#${id}`);
         if(!tool)return;
-        this.toggleActiveDot(e.target);
+        this.toggleActiveDot(dot);
 
         tool.activeWindow(true);
     }
@@ -229,7 +236,7 @@ export default class DevToolsHandler
         selectLang.ariaLabel = this.text.langsLabel[this.lang];
 
         const selectTheme = document.createElement("select");
-        selectTheme.ariaLabel = this.text.themeSelect[this.lang];
+        selectTheme.ariaLabel = this.text.themeLabel[this.lang];
 
         for(const l in this.text.langs)
         {
@@ -264,8 +271,10 @@ export default class DevToolsHandler
         
         for (const toolName in this.tools) 
         {
+            /** @type {AbstractWindow} appli to list in the menu */
             const tool = this.tools[toolName];
-            const title = tool.title?tool.title[this.lang]:"no title";
+            const title = tool.getTitle;
+            const logo = tool.getLogo();
             if(!title) continue;
 
             const li = document.createElement("li");
@@ -273,6 +282,7 @@ export default class DevToolsHandler
             const btn = document.createElement("button");
 
             btn.textContent = title;    
+            btn.prepend(logo)
             btn.addEventListener("click", ()=>this.appendTool(tool));
 
             li.append(btn);
@@ -361,13 +371,13 @@ export default class DevToolsHandler
      */
     localStorage(data = undefined)
     {
-        const savedDataString = localStorage.getItem(WindowNWM.storageSettingsKey);
+        const savedDataString = localStorage.getItem(AbstractWindow.storageSettingsKey);
         let savedData = JSON.parse(savedDataString);
         if(data)
         {
             savedData = {...savedData, ...data};
             const dataString = JSON.stringify(savedData);
-            localStorage.setItem(WindowNWM.storageSettingsKey, dataString);
+            localStorage.setItem(AbstractWindow.storageSettingsKey, dataString);
         }
         return savedData;
     }

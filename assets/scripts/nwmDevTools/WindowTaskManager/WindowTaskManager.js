@@ -1,13 +1,11 @@
-import WindowNWM from "../WindowNWM/WindowNWM.js";
-import { TaskManagerToolText } from "./TaskManagerToolText.js";
+import AbstractWindow from "../AbstractWindow/AbstractWindow.js";
+import { TaskManagerToolText } from "./WindowTaskManagerText.js";
 
 /**
  * Task manager having power of life and death on other windows
  */
-export default class TaskManagerTool extends WindowNWM
+export default class WindowTaskManager extends AbstractWindow
 {
-    /** url for the CSS file */
-    #href = "TaskManagerTool/TaskManagerTool.css";
     /** title of the window */
     static title = TaskManagerToolText.title;
     text = TaskManagerToolText;
@@ -23,7 +21,6 @@ export default class TaskManagerTool extends WindowNWM
     constructor()
     {
         super();
-        this.setTitle(this.getText("title"));
         this.init();
     }
     connectedCallback()
@@ -72,7 +69,6 @@ export default class TaskManagerTool extends WindowNWM
      */
     init()
     {
-        this.setCSS(this.#href);
         const 
             managerContainer = document.createElement("div"),
             table = document.createElement("table"), 
@@ -175,7 +171,7 @@ export default class TaskManagerTool extends WindowNWM
         const 
             id = e.target.dataset.id,
             action = e.target.dataset.action,
-            /** @type {WindowNWM} tool selected by the manager */
+            /** @type {AbstractWindow} tool selected by the manager */
             target = document.querySelector(`#${id}`);
         if(!target || !action)return;
         switch(action)
@@ -193,4 +189,4 @@ export default class TaskManagerTool extends WindowNWM
         }
     }
 }
-customElements.define("nwm-task-manager", TaskManagerTool);
+customElements.define("nwm-task-manager", WindowTaskManager);

@@ -1,6 +1,6 @@
 "use strict";
 
-import { OverlayToolText } from "./OverlayToolText.js";
+import { OverlayToolText } from "./ServiceOverlayText.js";
 
 /**
  * HTML Overlay Element
@@ -8,7 +8,7 @@ import { OverlayToolText } from "./OverlayToolText.js";
 export default class Overlay extends HTMLElement
 {
     /** Source for CSS file */
-    #src = "./assets/scripts/nwmDevTools/OverlayTool/OverlayTool.css";
+    #src = "./assets/scripts/nwmDevTools/ServiceOverlay/ServiceOverlay.css";
     /** text for overlay */
     #text = OverlayToolText;
     /** Is HTML currently displayed */

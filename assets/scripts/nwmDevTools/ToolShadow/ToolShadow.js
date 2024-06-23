@@ -1,21 +1,19 @@
 "use strict";
 
-import Tool from "../Tool/Tool.js";
-import { ShadowToolText } from "./ShadowToolText.js";
+import AbstractTool from "../AbstractTool/AbstractTool.js";
+import { ShadowToolText } from "./ToolShadowText.js";
 
 
 /**
  * Generate box shadows or text shadows
  */
-export default class ShadowTool extends Tool
+export default class ToolShadow extends AbstractTool
 {
     /** Title of the application */
     static title = ShadowToolText.title;
     text = ShadowToolText;
     /** list of shadows values */
     shadows = [];
-    /** source of CSS file */
-    #href = "ShadowTool/ShadowTool.css";
     /** Regex for hexadecimal color */
     colorRegex = /^#[\da-fA-F]{3,6}$/;
     /** the app is it in text shadow mode */
@@ -57,10 +55,9 @@ export default class ShadowTool extends Tool
     constructor(settings = undefined)
     {
         super();
+        
         this.settings = settings;
         this.setToolSettings();
-
-        this.setTitle(this.constructor.title[this.lang]);
 
         this.#init();
         this.setToolElements();
@@ -75,7 +72,6 @@ export default class ShadowTool extends Tool
      */
     #init()
     {
-        this.setCSS(this.#href);
         this.generateDisplayFormTool();
 
         
@@ -341,7 +337,7 @@ export default class ShadowTool extends Tool
         this.defaultShadow = tmp;
     }
 }
-customElements.define("nwm-box-shadow", ShadowTool);
+customElements.define("nwm-box-shadow", ToolShadow);
 /* 
     TODO: reset compteur d'ombre et tableau d'ombre sauvegardé
 */

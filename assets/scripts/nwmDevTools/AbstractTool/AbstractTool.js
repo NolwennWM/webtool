@@ -1,13 +1,13 @@
 "use strict";
-import WindowNWM from "../WindowNWM/WindowNWM.js";
-import Overlay from "../OverlayTool/OverlayTool.js";
-import { ToolText } from "./ToolText.js";
+import AbstractWindow from "../AbstractWindow/AbstractWindow.js";
+import Overlay from "../ServiceOverlay/ServiceOverlay.js";
+import { ToolText } from "./AbstractToolText.js";
 
 /**
  * Abstract Class for HTML Dev Tools.
      * @param {any} settings (optionnal) tool settings 
  */
-export default class Tool extends WindowNWM
+export default class AbstractTool extends AbstractWindow
 {
     /** class of tool's window */
     static windowClass = "nwm-tool";
@@ -27,7 +27,6 @@ export default class Tool extends WindowNWM
     constructor()
     {
         super();
-        this.setCSS("Tool/Tool.css");
     }
     /**
      * LifeCycle called if the tool is added to DOM
@@ -195,7 +194,7 @@ export default class Tool extends WindowNWM
             const tool = tools[oldTool.name];
             if(tool)
             {
-                /** @type {Tool} HTML Element containing the display of the tool */
+                /** @type {AbstractTool} HTML Element containing the display of the tool */
                 const t = new tool(oldTool.settings);
                 t.id = idTool;
                 if(!t.isOnTouchScreen)t.style.cssText = oldTool.style;

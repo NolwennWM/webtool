@@ -1,13 +1,11 @@
 "use strict";
-import Tool from "../Tool/Tool.js";
-import { GridToolText } from "./GridToolText.js";
+import AbstractTool from "../AbstractTool/AbstractTool.js";
+import { GridToolText } from "./ToolGridText.js";
 /**
  * Balise HTML créant un GRID generator
  */
-export default class GridTool extends Tool
+export default class ToolGrid extends AbstractTool
 {
-    /** url for the CSS file */
-    #href = "GridTool/GridTool.css";
     /** default numbers of columns */
     columns = 2;
     /** default numbers of rows */
@@ -67,7 +65,6 @@ export default class GridTool extends Tool
         this.settings = settings;
         this.setToolSettings();
 
-        this.setTitle(this.getText("title"));
         this.#init();
         this.setToolElements();
     }
@@ -81,8 +78,6 @@ export default class GridTool extends Tool
      */
     #init()
     {
-        this.setCSS(this.#href);
-
         this.generateDisplayFormTool();
 
         this.rowsForm = document.createElement("div");
@@ -396,21 +391,29 @@ export default class GridTool extends Tool
             oldId = this.parentId,
             newId = target.dataset.id;
         if(!newId)return;
-        if(event.type === "mouseup" && oldId)
+        if(event.type === "mouseup")
         {
-            x.push(
-                (oldId % this.columns)||this.columns, 
-                (newId % this.columns)||this.columns
-            );
-            y.push(
-                Math.ceil(oldId / this.columns),
-                Math.ceil(newId / this.columns)
-            );
-            this.CreateElementChild(Math.min(...y), Math.min(...x), Math.max(...y)+1, Math.max(...x)+1);
+            if(oldId)
+            {
+                x.push(
+                    (oldId % this.columns)||this.columns, 
+                    (newId % this.columns)||this.columns
+                );
+                y.push(
+                    Math.ceil(oldId / this.columns),
+                    Math.ceil(newId / this.columns)
+                );
+                this.CreateElementChild(Math.min(...y), Math.min(...x), Math.max(...y)+1, Math.max(...x)+1);
 
-            this.parentId = "";
+                this.parentId = "";
+            }
+            else
+            {
+                this.parentId = newId;
+            }
+            
         }
-        else if (event.type === "mousedown")
+        else if (event.type === "mousedown" && !this.isOnTouchScreen)
         {
             this.parentId = newId;
         }
@@ -545,4 +548,4 @@ export default class GridTool extends Tool
     }
 }
 
-customElements.define("nwm-grid", GridTool);
+customElements.define("nwm-grid", ToolGrid);

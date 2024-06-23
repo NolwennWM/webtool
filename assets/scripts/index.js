@@ -1,29 +1,34 @@
-import ShadowTool from "./nwmDevTools/ShadowTool/ShadowTool.js";
-import GridTool from "./nwmDevTools/GridTool/GridTool.js";
-import TutorialTool from "./nwmDevTools/TutorialTool/TutorialTool.js";
+import ToolShadow from "./nwmDevTools/ToolShadow/ToolShadow.js";
+import ToolGrid from "./nwmDevTools/ToolGrid/ToolGrid.js";
+import WindowTutorial from "./nwmDevTools/WindowTutorial/WindowTutorial.js";
 import DevToolsHandler from "./DevToolsHandler/DevToolsHandler.js";
-import Tool from "./nwmDevTools/Tool/Tool.js";
+import AbstractTool from "./nwmDevTools/AbstractTool/AbstractTool.js";
 import BurgerMenu from "./BurgerMenu/BurgerMenu.js";
-import TaskManagerTool from "./nwmDevTools/TaskManagerTool/TaskManagerTool.js";
+import WindowTaskManager from "./nwmDevTools/WindowTaskManager/WindowTaskManager.js";
 
 try
 {
-    const tools = {GridTool, ShadowTool,TaskManagerTool, TutorialTool};
+    const tools = {ToolGrid, ToolShadow,WindowTaskManager, WindowTutorial};
 
     const handler = new DevToolsHandler(tools);
 
-    Tool.getLocalStorageTools(handler.container, tools);
-    Tool.setLocalStorageEvent();
+    AbstractTool.getLocalStorageTools(handler.container, tools);
+    AbstractTool.setLocalStorageEvent();
+    registerServiceWorker();
 }catch(e)
 {
     console.error(e);
 }
 
+
+async function registerServiceWorker()
+{
+    if("serviceWorker" in navigator)
+    {
+        const registration = await navigator.serviceWorker.register("/sw.js", {scope: "/"});
+    }
+}
 /* 
     TODO :
-    - on ctrl + arrow move the window as windows arrow
-    - Ajouter worker ?
-    - add logo for each tool to add in dot (next and previous too?)
-    - improve selection of block in touchscreen grid generator
-    - add interface explanation of mobile version to tutorial.
+    - on shift + arrow move the window as windows arrow
 */

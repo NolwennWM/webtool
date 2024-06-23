@@ -1,4 +1,4 @@
-export const WindowNWMText = {
+export const AbstractWindowText = {
     languages:["fr", "en"],
     buttons:{
         close:{
