@@ -31,4 +31,5 @@ async function registerServiceWorker()
 /* 
     TODO :
     - on shift + arrow move the window as windows arrow
+    - dark mode optimisation
 */

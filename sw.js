@@ -1,13 +1,14 @@
 "use strict";
 const 
     /** Name of the current cache */
-    currentCache = "nwm-v1.1",
+    currentCache = "nwm-v1.2",
     /** List of the caches name to not delete */
     cachesToKeep = [currentCache],
     /** Files to cache on page loading */
     filesToAddInCache = [
     "/", "/index.html",
     "/assets/",
+    "/assets/images/icons/nwm-logo-animated-loop.svg",
     "/assets/styles/",
     "/assets/styles/config.css",
     "/assets/styles/style.css",
