@@ -1,0 +1,30 @@
+.code-container
+{
+    position: relative;
+    width: 100px;
+    font-family: monospace;
+    & :where(textarea, pre, code)
+    {
+        position: absolute;
+        inset: 0;
+        padding: 2px;
+        margin: 0;
+    }
+    & textarea
+    {
+        color: transparent;
+        background-color: transparent;
+        caret-color: light-dark(black, whitesmoke);
+    }
+    & pre
+    {
+        width: 100%;
+        height: 100%;
+        background-color: field;
+        border-width: 1px;
+        border-style: solid;
+        border-color: light-dark(rgb(118, 118, 118), rgb(133, 133, 133));
+        & .tag{color: blue;}
+        & .comment{color: green;}
+    }
+}

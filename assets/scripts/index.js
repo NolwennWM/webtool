@@ -5,10 +5,11 @@ import DevToolsHandler from "./DevToolsHandler/DevToolsHandler.js";
 import AbstractTool from "./nwmDevTools/AbstractTool/AbstractTool.js";
 import BurgerMenu from "./BurgerMenu/BurgerMenu.js";
 import WindowTaskManager from "./nwmDevTools/WindowTaskManager/WindowTaskManager.js";
+import ToolEditor from "./nwmDevTools/ToolEditor/ToolEditor.js";
 
 try
 {
-    const tools = {ToolGrid, ToolShadow,WindowTaskManager, WindowTutorial};
+    const tools = {ToolGrid, ToolShadow,ToolEditor, WindowTaskManager, WindowTutorial};
 
     const handler = new DevToolsHandler(tools);
 
@@ -32,4 +33,10 @@ async function registerServiceWorker()
     TODO :
     - on shift + arrow move the window as windows arrow
     - dark mode optimisation
+    - justify content align items pour grid
+    - flex generator
+    - code editor
+    - color wheel
+    - cubic bezier
+    - code share ?
 */
