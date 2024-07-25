@@ -16,7 +16,7 @@
         background-color: transparent;
         caret-color: light-dark(black, whitesmoke);
     }
-    & pre
+    & code
     {
         width: 100%;
         height: 100%;

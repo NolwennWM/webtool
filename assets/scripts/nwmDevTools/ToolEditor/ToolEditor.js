@@ -44,16 +44,15 @@ export default class ToolEditor extends AbstractTool
         this.display.append(iframe);
         const htmlContainer = document.createElement("div");
         htmlContainer.classList.add("code-container");
-        const htmlCode = document.createElement("code");
-        const htmlDisplayer = document.createElement("pre");
-        this.displayer.html = htmlDisplayer;
-        const htmlEditor = document.createElement("textarea");
-        htmlEditor.name = "html";
-        htmlEditor.addEventListener("input", setEvent);
+        const htmlEditor = document.createElement("code");
+        const defaultLine = document.createElement("div");
+        defaultLine.innerHTML = "<br>";
+        htmlEditor.append(defaultLine)
+        htmlEditor.contentEditable = true;
+        htmlEditor.dataset.name = "html";
         htmlEditor.addEventListener("input", setEvent);
         this.editors.html = htmlEditor;
-        htmlCode.append(htmlDisplayer);
-        htmlContainer.append(htmlCode, htmlEditor);
+        htmlContainer.append(htmlEditor);
 
         const cssEditor = document.createElement("textarea");
         cssEditor.addEventListener("input", setEvent);
@@ -68,21 +67,78 @@ export default class ToolEditor extends AbstractTool
     {
 
     }
-    setEvent({data, target:{name, value}})
+    setEvent({data, target:{dataset:{name}, textContent}})
+    // setEvent(e)
     {
-        console.log(data);
+        console.log(textContent);
+        const selection = getSelection();
+        const currentLine = selection?.focusNode?.parentElement;
+        console.log(selection);
         this.runCode();
-        console.log(name);
+        console.log(data);
+        if(data === null)return;
+        const sel = getSelection();
+        const node = sel.focusNode;
+        const offset = sel.focusOffset;
+        const pos = this.getCursorPosition(this.editors.html, node, offset, { pos: 0, done: false });
+        if (offset === 0) pos.pos += 0.5;
+
         switch(name)
         {
             case "html": 
-                this.displayHTML(value);
+                this.displayHTML(selection, currentLine);
                 break;
         }
+        console.log("endEvent");
+        sel.removeAllRanges()
+        const range = this.setCursorPosition(this.editors.html, document.createRange(), {
+    pos: pos.pos,
+    done: false,
+  });
+  range.collapse(true);
+  sel.addRange(range);
     }
-    displayHTML(text)
+    getCursorPosition(parent, node, offset, stat) {
+        if (stat.done) return stat;
+      
+        let currentNode = null;
+        if (parent.childNodes.length == 0) {
+          stat.pos += parent.textContent.length;
+        } else {
+          for (let i = 0; i < parent.childNodes.length && !stat.done; i++) {
+            currentNode = parent.childNodes[i];
+            if (currentNode === node) {
+              stat.pos += offset;
+              stat.done = true;
+              return stat;
+            } else this.getCursorPosition(currentNode, node, offset, stat);
+          }
+        }
+        return stat;
+      }
+      setCursorPosition(parent, range, stat) {
+        if (stat.done) return range;
+      
+        if (parent.childNodes.length == 0) {
+          if (parent.textContent.length >= stat.pos) {
+            range.setStart(parent, stat.pos);
+            stat.done = true;
+          } else {
+            stat.pos = stat.pos - parent.textContent.length;
+          }
+        } else {
+          for (let i = 0; i < parent.childNodes.length && !stat.done; i++) {
+            let currentNode = parent.childNodes[i];
+            this.setCursorPosition(currentNode, range, stat);
+          }
+        }
+        return range;
+      }
+    displayHTML(selection, line)
     {
-        let newText = text;
+        let newText = line.textContent;
+        const range = selection.focusOffset
+        console.log(range);
         const regex = this.regex.html;
         for (const replace of regex.specials) 
         {
@@ -90,7 +146,8 @@ export default class ToolEditor extends AbstractTool
         }
         newText = newText.replace(...regex.comment);
         newText = newText.replace(...regex.tag);
-        this.displayer.html.innerHTML = newText;
+        line.innerHTML = newText;
+        console.log("endDisplay");
     }
     runCode()
     {
