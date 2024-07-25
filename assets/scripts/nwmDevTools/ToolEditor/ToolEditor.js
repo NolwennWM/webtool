@@ -7,7 +7,7 @@ export default class ToolEditor extends AbstractTool
     static title = ToolEditorText.title;
     /** text translation of the tool */
     text = ToolEditorText;
-    timerLimit = 3000;
+    timerLimit = 2000;
     timerId = 0;
     iframe;
     editors = {};
@@ -50,6 +50,7 @@ export default class ToolEditor extends AbstractTool
         const htmlEditor = document.createElement("textarea");
         htmlEditor.name = "html";
         htmlEditor.addEventListener("input", setEvent);
+        htmlEditor.addEventListener("input", setEvent);
         this.editors.html = htmlEditor;
         htmlCode.append(htmlDisplayer);
         htmlContainer.append(htmlCode, htmlEditor);
@@ -63,9 +64,12 @@ export default class ToolEditor extends AbstractTool
 
         this.form.append(htmlContainer, cssEditor, jsEditor)
     }
-    setEvent(e)
+    handleSpecialKey()
     {
-        e.preventDefault();
+
+    }
+    setEvent({data, target:{name, value}})
+    {
         console.log(data);
         this.runCode();
         console.log(name);
