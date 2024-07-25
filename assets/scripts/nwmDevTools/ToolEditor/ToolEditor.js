@@ -46,6 +46,7 @@ export default class ToolEditor extends AbstractTool
         htmlContainer.classList.add("code-container");
         const htmlEditor = document.createElement("code");
         const defaultLine = document.createElement("div");
+        defaultLine.classList.add("line");
         defaultLine.innerHTML = "<br>";
         htmlEditor.append(defaultLine)
         htmlEditor.contentEditable = true;
@@ -68,14 +69,16 @@ export default class ToolEditor extends AbstractTool
 
     }
     setEvent({data, target:{dataset:{name}, textContent}})
-    // setEvent(e)
     {
         console.log(textContent);
         const selection = getSelection();
-        const currentLine = selection?.focusNode?.parentElement;
-        console.log(selection);
+        let currentLine = selection?.focusNode?.parentElement;
+        if(!currentLine.classList.contains("line"))
+        {
+            currentLine = currentLine.closest(".line");
+        }
+        console.log(selection.focusNode, currentLine);
         this.runCode();
-        console.log(data);
         if(data === null)return;
         const sel = getSelection();
         const node = sel.focusNode;
@@ -160,7 +163,7 @@ export default class ToolEditor extends AbstractTool
     }
     runHTML()
     {
-        const html = this.editors.html.value;
+        const html = this.editors.html.textContent;
         this.iframe.contentDocument.body.innerHTML = html;
     }
     runCSS()
