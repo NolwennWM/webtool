@@ -33,6 +33,9 @@ export default class ToolEditor extends AbstractTool
         super();
         this.#init();
     }
+    /**
+     * Initialize interface and events
+     */
     #init()
     {
         const setEvent = this.setEvent.bind(this);
@@ -68,11 +71,15 @@ export default class ToolEditor extends AbstractTool
     {
 
     }
+    /**
+     * Check which language is used and launch the good displayer
+     * @param {Event} param0 Input Event
+     */
     setEvent({data, target:{name, value}})
     {
-        console.log(data);
+        // console.log(data);
         this.runCode();
-        console.log(name);
+        // console.log(name);
         switch(name)
         {
             case "html": 
@@ -80,6 +87,11 @@ export default class ToolEditor extends AbstractTool
                 break;
         }
     }
+    /**
+     * Display HTML highlighted
+     * Regex are used to remplace characters and add coloration
+     * @param {string} text text to display
+     */
     displayHTML(text)
     {
         let newText = text;
@@ -88,10 +100,16 @@ export default class ToolEditor extends AbstractTool
         {
             newText = newText.replace(...replace);
         }
+        console.log(newText);
+        
         newText = newText.replace(...regex.comment);
         newText = newText.replace(...regex.tag);
         this.displayer.html.innerHTML = newText;
     }
+    /**
+     * Run the html, css and js code avec a waiting time.
+     * If the user type something else, the waiting time is reset.
+     */
     runCode()
     {
         clearTimeout(this.timerId);
@@ -101,11 +119,17 @@ export default class ToolEditor extends AbstractTool
             this.runJS();
         }, this.timerLimit);
     }
+    /**
+     * Run HTML code in the iframe.
+     */
     runHTML()
     {
         const html = this.editors.html.value;
         this.iframe.contentDocument.body.innerHTML = html;
     }
+    /**
+     * Run CSS code in the iframe.
+     */
     runCSS()
     {
         const css = this.editors.css.value;
@@ -113,6 +137,9 @@ export default class ToolEditor extends AbstractTool
         style.textContent = css;
         this.iframe.contentDocument.head.append(style);
     }
+    /**
+     * Run Javascript code in the iframe.
+     */
     runJS()
     {
         const js = this.editors.js.value;
